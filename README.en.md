@@ -67,9 +67,24 @@ snow_chat_ui is a universal LLM chat window built on **ChatUI ([@chatui/core](ht
 
 ### Showcase
 
-<p align="center">
- <img src="client/public/icons/og-cover.png" alt="snow_chat_ui share image" width="640"/>
-</p>
+* Chat workbench
+<table>
+    <tr>
+        <td><img src="docs/screenshots/chat.png" width="560" alt="Chat workbench"/></td>
+        <td><img src="docs/screenshots/settings-providers.png" width="560" alt="LLM Provider settings"/></td>
+    </tr>
+</table>
+* Settings center (Models / Tools / Skills / Advanced & Data) + API docs
+<table>
+    <tr>
+        <td><img src="docs/screenshots/settings-tools.png" width="560" alt="MCP Tools"/></td>
+        <td><img src="docs/screenshots/settings-skills.png" width="560" alt="Skills"/></td>
+    </tr>
+    <tr>
+        <td><img src="docs/screenshots/settings-advanced.png" width="560" alt="Advanced & Data"/></td>
+        <td><img src="docs/screenshots/api-docs.png" width="560" alt="API docs"/></td>
+    </tr>
+</table>
 
 ## Quick Start
 

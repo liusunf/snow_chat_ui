@@ -67,9 +67,24 @@ snow_chat_ui 是一款基于 **ChatUI（[@chatui/core](https://chatui.io)）** �
 
 ### 系统展示
 
-<p align="center">
- <img src="client/public/icons/og-cover.png" alt="snow_chat_ui 分享图" width="640"/>
-</p>
+* 对话工作台
+<table>
+    <tr>
+        <td><img src="docs/screenshots/chat.png" width="560" alt="对话工作台"/></td>
+        <td><img src="docs/screenshots/settings-providers.png" width="560" alt="模型服务配置"/></td>
+    </tr>
+</table>
+* 设置中心（模型服务 / 工具连接 / 技能 / 高级与数据）+ 接口文档
+<table>
+    <tr>
+        <td><img src="docs/screenshots/settings-tools.png" width="560" alt="工具连接"/></td>
+        <td><img src="docs/screenshots/settings-skills.png" width="560" alt="技能配置"/></td>
+    </tr>
+    <tr>
+        <td><img src="docs/screenshots/settings-advanced.png" width="560" alt="高级与数据"/></td>
+        <td><img src="docs/screenshots/api-docs.png" width="560" alt="接口对接文档"/></td>
+    </tr>
+</table>
 
 ## 快速开始
 
