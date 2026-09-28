@@ -796,6 +796,11 @@ body {
   margin: 2px 0;
 }
 
+/* loose list（列表项间带空行）的 li 内 p 不额外撑高 */
+.md-body li p {
+  margin: 0;
+}
+
 .md-body code {
   font-family: 'SF Mono', Consolas, 'Courier New', monospace;
   font-size: 12px;
