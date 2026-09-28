@@ -2,8 +2,35 @@
 
 import type { AppConfig, ProviderConfig, SkillsResponse, TestResult, McpServerConfig } from './types';
 
+/**
+ * 后端 API 地址：
+ * - 未配置（默认）：相对路径 /api/*，前端与后端同源部署（如后端托管 dist 或反向代理）。
+ * - 已配置：localStorage 中保存的完整地址（如 http://192.168.1.10:8787），前端可独立部署。
+ */
+const API_BASE_KEY = 'chatui_api_base';
+
+export function getApiBase(): string {
+  try {
+    return (localStorage.getItem(API_BASE_KEY) || '').trim().replace(/\/+$/, '');
+  } catch {
+    return '';
+  }
+}
+
+export function setApiBase(v: string): void {
+  try {
+    localStorage.setItem(API_BASE_KEY, v.trim());
+  } catch {
+    /* ignore */
+  }
+}
+
+function apiUrl(path: string): string {
+  return `${getApiBase()}${path}`;
+}
+
 async function http<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
+  const res = await fetch(apiUrl(url), {
     headers: { 'Content-Type': 'application/json' },
     ...init,
   });
@@ -58,7 +85,7 @@ export async function streamChat(
   cb: StreamCallbacks,
   signal?: AbortSignal,
 ): Promise<void> {
-  const res = await fetch('/api/chat', {
+  const res = await fetch(apiUrl('/api/chat'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

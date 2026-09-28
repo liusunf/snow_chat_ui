@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { api } from '../api';
+import { api, getApiBase, setApiBase } from '../api';
 import type { AppConfig, McpServerConfig, ProviderConfig, ProviderType } from '../types';
 import { BUILTIN_SKILL_DEFS } from './builtinSkills';
 import { FALLBACK_OPENAI_MODELS, PROVIDER_PRESETS, presetToProvider, type ProviderPreset } from './providerPresets';
@@ -80,7 +80,13 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
   const [fetchingModels, setFetchingModels] = useState<string | null>(null);
   const [fetchedModels, setFetchedModels] = useState<Record<string, string[]>>({});
   const [advancedOpen, setAdvancedOpen] = useState<Record<string, boolean>>({});
+  const [apiBase, setApiBaseState] = useState<string>(getApiBase());
   const importRef = useRef<HTMLInputElement | null>(null);
+
+  const handleApiBaseChange = (v: string) => {
+    setApiBaseState(v);
+    setApiBase(v);
+  };
 
   useEffect(() => {
     setDraft(config);
@@ -735,6 +741,20 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                   value={draft.maxToolRounds ?? 8}
                   onChange={(e) => patch({ maxToolRounds: Number(e.target.value) })}
                 />
+              </div>
+              <h3 style={{ marginTop: 18 }}>后端服务</h3>
+              <div className="field">
+                <label>后端 API 地址</label>
+                <input
+                  type="text"
+                  value={apiBase}
+                  onChange={(e) => handleApiBaseChange(e.target.value)}
+                  placeholder="留空 = 同源部署（当前站点 /api）"
+                  spellCheck={false}
+                />
+                <div className="hint">
+                  前端独立部署时填写后端完整地址（如 http://192.168.1.10:8787），全部 API 请求将指向该服务；留空则请求当前站点 /api/*。修改后立即生效，并保存于本机。
+                </div>
               </div>
               <h3 style={{ marginTop: 18 }}>数据管理</h3>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
