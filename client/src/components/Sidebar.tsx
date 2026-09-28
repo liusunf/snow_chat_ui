@@ -21,8 +21,8 @@ export function Sidebar({ conversations, activeId, online, providerName, skillCo
     <aside className="sidebar">
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          <span className="logo-dot">AI</span>
-          <span>{t('common.workbench')}</span>
+          <span className="logo-dot">❄</span>
+          <span>snow_chat_ui</span>
         </div>
         <button className="new-chat-btn" onClick={onNew}>
           ＋ {t('common.newChat')}

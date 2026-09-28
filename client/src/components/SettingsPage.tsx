@@ -81,6 +81,12 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
     get_weather: t('skill.weather.desc'),
     fetch_url: t('skill.fetch.desc'),
   };
+  const SKILL_ICON: Record<string, string> = {
+    get_current_time: '🕐',
+    calculator: '🧮',
+    get_weather: '⛅',
+    fetch_url: '🌐',
+  };
   const PRESET_HINT: Record<string, string> = {
     'OpenAI': t('preset.openai'),
     'DeepSeek': t('preset.deepseek'),
@@ -729,29 +735,38 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
           )}
 
           {tab === 'skills' && (
-            <section className="config-section">
-              <h3>
-                {t('settings.tabSkills')} <span className="badge">{t('settings.enabled', [counts.skills])}</span>
-              </h3>
-              {BUILTIN_SKILL_DEFS.map((s) => {
-                const enabled = draft.skills.some((x) => x.id === s.id && x.enabled);
-                return (
-                  <div key={s.id} className="switch-row">
-                    <span>
-                      {SKILL_NAME[s.id] ?? s.name}
-                      <div className="desc">{SKILL_DESC[s.id] ?? s.description}</div>
-                    </span>
-                    <label className="switch">
-                      <input type="checkbox" checked={enabled} onChange={(e) => toggleSkill(s.id, e.target.checked)} />
-                      <span className="slider" />
-                    </label>
+            <>
+              <div className="adv-card">
+                <div className="adv-card-head">
+                  <span className="adv-card-icon">🎯</span>
+                  <div>
+                    <div className="adv-card-title">
+                      {t('settings.tabSkills')} <span className="badge">{t('settings.enabled', [counts.skills])}</span>
+                    </div>
+                    <div className="adv-card-sub">{t('settings.skillsSub')}</div>
                   </div>
-                );
-              })}
-              <div style={{ marginTop: 16, fontSize: 12, color: 'var(--text-3)' }}>
-                {t('settings.mcpInjectedHint')}
+                </div>
+                <div className="adv-card-body">
+                  {BUILTIN_SKILL_DEFS.map((s) => {
+                    const enabled = draft.skills.some((x) => x.id === s.id && x.enabled);
+                    return (
+                      <div key={s.id} className="skill-row">
+                        <span className="skill-ico">{SKILL_ICON[s.id] ?? '🔧'}</span>
+                        <span className="skill-text">
+                          <b>{SKILL_NAME[s.id] ?? s.name}</b>
+                          <div className="desc">{SKILL_DESC[s.id] ?? s.description}</div>
+                        </span>
+                        <label className="switch">
+                          <input type="checkbox" checked={enabled} onChange={(e) => toggleSkill(s.id, e.target.checked)} />
+                          <span className="slider" />
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </section>
+              <div className="adv-tip">💡 {t('settings.mcpInjectedHint')}</div>
+            </>
           )}
 
           {tab === 'advanced' && (
