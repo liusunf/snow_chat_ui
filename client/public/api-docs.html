@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>后端接口对接文档 · ChatUI LLM Workbench</title>
+<style>
+  :root {
+    --brand: #1a73e8;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --text: #1a1b1c;
+    --text-2: #5f6368;
+    --border: #e3e6ea;
+    --code-bg: #f4f6f8;
+    --ok: #188038;
+    --warn: #b06000;
+    --danger: #d93025;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.7; }
+  .layout { display: flex; min-height: 100vh; }
+  /* 侧边导航 */
+  .sidebar { width: 250px; flex-shrink: 0; background: #fff; border-right: 1px solid var(--border); padding: 20px 14px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .sidebar .logo { font-weight: 700; font-size: 15px; padding: 0 8px 14px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+  .sidebar .logo small { display: block; color: var(--text-2); font-weight: 400; font-size: 11px; margin-top: 2px; }
+  .sidebar a { display: block; padding: 6px 8px; border-radius: 8px; color: var(--text-2); text-decoration: none; font-size: 13px; }
+  .sidebar a:hover { background: #eef3fc; color: var(--brand); }
+  .sidebar .sec { color: #9aa0a6; font-size: 11px; padding: 10px 8px 4px; }
+  .main { flex: 1; max-width: 960px; padding: 32px 40px 80px; }
+  h1 { font-size: 22px; margin-bottom: 6px; }
+  .sub { color: var(--text-2); font-size: 13px; margin-bottom: 24px; }
+  h2 { font-size: 18px; margin: 36px 0 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  h3 { font-size: 15px; margin: 22px 0 8px; }
+  h4 { font-size: 13.5px; margin: 14px 0 6px; }
+  p { margin: 8px 0; }
+  ul, ol { margin: 8px 0 8px 22px; }
+  li { margin: 3px 0; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', Consolas, monospace; font-size: 12px; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 14px 16px; border-radius: 10px; overflow-x: auto; font-size: 12.5px; line-height: 1.6; margin: 10px 0; }
+  pre code { background: none; padding: 0; color: inherit; }
+  .ep { color: #7dd3fc; }
+  .en { color: #c084fc; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+  th, td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #f2f5f9; font-weight: 600; white-space: nowrap; }
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .b-get { background: #e8f0fe; color: #1a73e8; }
+  .b-post { background: #e6f4ea; color: #188038; }
+  .b-put { background: #fef7e0; color: #b06000; }
+  .b-sse { background: #fce8e6; color: #d93025; }
+  .box { border: 1px solid var(--border); border-left: 3px solid var(--brand); background: #fff; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+  .box.warn { border-left-color: var(--warn); }
+  .box.ok { border-left-color: var(--ok); }
+  .anchor { scroll-margin-top: 16px; }
+  @media (max-width: 760px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: static; }
+    .main { padding: 20px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <div class="logo">后端接口对接文档<small>ChatUI LLM Workbench · v1.0</small></div>
+    <div class="sec">总览</div>
+    <a href="#overview">1. 总体架构</a>
+    <a href="#static">2. 静态托管约定</a>
+    <div class="sec">接口明细</div>
+    <a href="#api-config-get">GET /api/config</a>
+    <a href="#api-config-put">PUT /api/config</a>
+    <a href="#api-config-models">POST /api/config/models</a>
+    <a href="#api-config-test">POST /api/config/test-provider</a>
+    <a href="#api-mcp-test">POST /api/mcp/test</a>
+    <a href="#api-mcp-refresh">POST /api/mcp/refresh</a>
+    <a href="#api-mcp-tools">GET /api/mcp/tools</a>
+    <a href="#api-skills">GET /api/skills</a>
+    <a href="#api-health">GET /api/health</a>
+    <a href="#api-chat">POST /api/chat (SSE)</a>
+    <div class="sec">后端语义</div>
+    <a href="#provider-abstraction">4.1 Provider 适配层</a>
+    <a href="#tool-injection">4.2 工具定义注入</a>
+    <a href="#agent-loop">4.3 Agent 工具循环</a>
+    <a href="#call-map">5. 前端调用自查表</a>
+    <a href="#default-config">6. 默认配置参考</a>
+    <a href="#verify">7. 快速验证清单</a>
+  </nav>
+
+  <main class="main">
+    <h1>ChatUI LLM Workbench — 后端接口对接文档</h1>
+    <p class="sub">实现以下接口并托管前端静态产物，即可完整驱动这套 UI：LLM Provider 统一配置 / MCP / Skill / 流式对话 · 传输 JSON + SSE · 默认端口 8787（环境变量 PORT 可覆盖）</p>
+
+    <h2 class="anchor" id="overview">1. 总体架构</h2>
+    <pre><code>┌─────────────────────────────┐        HTTP / SSE          ┌──────────────────────────────┐
+│  前端（静态产物，浏览器）     │  ───────────────────────►  │  你的后端服务                  │
+│  - 对话页 / 设置中心          │  GET/POST /api/*          │  - 配置持久化                  │
+│  - 会话列表 / 全端 PWA       │  ◄─────────────────────   │  - LLM Provider 适配层         │
+│                             │      JSON / SSE 流          │  - MCP 客户端 / 技能执行器      │
+└─────────────────────────────┘                            └──────────────────────────────┘</code></pre>
+    <div class="box ok">后端职责：① 提供 /api/* 全部接口；② 实现统一 LLM Provider 抽象（配置 → 厂商调用 → SSE 事件流）；③ 实现 Agent 工具循环（function calling）；④ 托管前端静态产物。</div>
+
+    <h2 class="anchor" id="static">2. 前端静态托管约定（全端支持的前提）</h2>
+    <table>
+      <tr><th>路径</th><th>内容</th><th>说明</th></tr>
+      <tr><td><code>/</code></td><td><code>index.html</code></td><td>入口页，含 OG / Twitter Card / meta 标签（已内置）</td></tr>
+      <tr><td><code>/assets/*</code></td><td>JS/CSS 构建产物</td><td>Vite 生成，index.html 自动引用</td></tr>
+      <tr><td><code>/manifest.json</code></td><td>PWA 清单</td><td>名称 / 图标 / 主题色</td></tr>
+      <tr><td><code>/sw.js</code></td><td>Service Worker</td><td>PWA 离线缓存（可选）</td></tr>
+      <tr><td><code>/icons/*</code></td><td>icon-192/512、apple-touch-icon、og-cover</td><td>PWA 图标 + 分享卡片图（1200×630）</td></tr>
+    </table>
+    <p><b>SPA 回退</b>：非 <code>/api/</code> 开头的 GET 一律返回 <code>index.html</code>。前端未内置鉴权，可在网关层自行加；注意 <code>GET /api/config</code> 的 apiKey 必须掩码。</p>
+
+    <h2 class="anchor" id="api-config-get">3.1 <span class="badge b-get">GET</span> /api/config — 读取配置</h2>
+    <p>设置中心加载时调用，渲染全部 Provider / MCP / Skill 配置。响应为 <code>AppConfig</code>，apiKey 已掩码：</p>
+    <pre><code>{
+  <span class="en">"activeProviderId"</span>: "ollama-demo",
+  <span class="en">"providers"</span>: [{ "id": "ollama-demo", "type": "ollama", "name": "Ollama 本地",
+    "baseURL": "http://localhost:11434", "apiKey": "", "model": "ornith-1.5:9b",
+    "temperature": 0.7, "maxTokens": 4096, "enabled": true, "models": ["ornith-1.5:9b"] }],
+  <span class="en">"mcpServers"</span>: [{ "id": "everything", "name": "MCP Everything (stdio 示例)",
+    "transport": "stdio", "command": "npx", "args": ["-y", "@modelcontextprotocol/server-everything"],
+    "env": {}, "enabled": false }],
+  <span class="en">"skills"</span>: [{ "id": "get_current_time", "name": "获取当前时间",
+    "description": "获取当前日期与时间（含时区）", "type": "builtin", "enabled": true }],
+  <span class="en">"systemPrompt"</span>: "你是一个通用 AI 助手……",
+  <span class="en">"maxToolRounds"</span>: 8
+}</code></pre>
+    <table>
+      <tr><th>类型</th><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr>
+      <tr><td rowspan="6">AppConfig</td><td>activeProviderId</td><td>string</td><td>✓</td><td>默认 Provider id（对话缺省时使用）</td></tr>
+      <tr><td>providers</td><td>ProviderConfig[]</td><td>✓</td><td>LLM Provider 列表</td></tr>
+      <tr><td>mcpServers</td><td>McpServerConfig[]</td><td>✓</td><td>MCP 服务器列表</td></tr>
+      <tr><td>skills</td><td>SkillConfig[]</td><td>✓</td><td>技能列表</td></tr>
+      <tr><td>systemPrompt</td><td>string</td><td></td><td>附加系统提示词（后端追加技能清单）</td></tr>
+      <tr><td>maxToolRounds</td><td>number</td><td>✓</td><td>最大工具循环轮数（1~20）</td></tr>
+      <tr><td rowspan="8">ProviderConfig</td><td>id</td><td>string</td><td>✓</td><td>唯一 id</td></tr>
+      <tr><td>type</td><td>'openai'|'anthropic'|'gemini'|'ollama'</td><td>✓</td><td>Provider 类型</td></tr>
+      <tr><td>name</td><td>string</td><td>✓</td><td>显示名称</td></tr>
+      <tr><td>baseURL</td><td>string</td><td></td><td>厂商 API 地址</td></tr>
+      <tr><td>apiKey</td><td>string</td><td></td><td>GET 时掩码，保存时明文</td></tr>
+      <tr><td>model</td><td>string</td><td>✓</td><td>当前模型名</td></tr>
+      <tr><td>models</td><td>string[]</td><td></td><td>模型白名单（空=不限制）</td></tr>
+      <tr><td>temperature / maxTokens / enabled</td><td>number / number / boolean</td><td></td><td>采样温度(0.7) / 最大token(4096) / 是否启用</td></tr>
+      <tr><td rowspan="5">McpServerConfig</td><td>id / name</td><td>string</td><td>✓</td><td>唯一 id / 显示名称</td></tr>
+      <tr><td>transport</td><td>'stdio'|'sse'|'http'</td><td>✓</td><td>MCP 传输方式</td></tr>
+      <tr><td>command / args / env</td><td>string / string[] / object</td><td></td><td>stdio 启动命令、参数、附加环境变量</td></tr>
+      <tr><td>url</td><td>string</td><td></td><td>sse/http 服务地址</td></tr>
+      <tr><td>enabled</td><td>boolean</td><td>✓</td><td>是否启用</td></tr>
+      <tr><td rowspan="4">SkillConfig</td><td>id / name / description</td><td>string</td><td>✓</td><td>技能 id / 名称 / 给 LLM 的说明</td></tr>
+      <tr><td>type</td><td>'builtin'|'mcp'</td><td>✓</td><td>内置函数 或 绑定 MCP 工具</td></tr>
+      <tr><td>mcpServerId</td><td>string</td><td></td><td>type=mcp 时绑定</td></tr>
+      <tr><td>enabled</td><td>boolean</td><td>✓</td><td>是否启用</td></tr>
+    </table>
+    <div class="box">掩码参考：apiKey 长度 ≤8 全部 <code>*</code>；否则 <code>前4位 + *×min(12, len-8) + 后4位</code>。所有中文名称必须 UTF-8 原样返回（勿替换为 <code>?</code>）。</div>
+
+    <h2 class="anchor" id="api-config-put">3.2 <span class="badge b-put">PUT</span> /api/config — 保存配置</h2>
+    <p>设置中心「保存配置」调用。请求体为完整 <code>AppConfig</code>（apiKey 明文），后端<b>整体覆盖</b>。</p>
+    <pre><code><span class="ep">PUT</span> /api/config
+Content-Type: application/json
+{ ...完整 AppConfig... }
+
+→ 200 { "ok": true }
+→ 400 { "error": "配置格式不正确：缺少 providers 数组" }</code></pre>
+
+    <h2 class="anchor" id="api-config-models">3.3 <span class="badge b-post">POST</span> /api/config/models — 拉取模型列表</h2>
+    <pre><code><span class="ep">POST</span> /api/config/models
+{ "type": "ollama", "baseURL": "http://localhost:11434", "apiKey": "", "model": "ornith-1.5:9b" }
+
+→ 200 { "ok": true, "models": ["ornith-1.5:9b", "qwen35-4b:latest"] }
+→ 200 { "ok": false, "message": "无法连接到 http://localhost:11434（Ollama 服务未启动或地址不对）" }</code></pre>
+    <div class="box warn">前端超时 8 秒；错误文案需人话化，区分「网络不通」与「Key 无效」；厂商不可达时可返回离线候选模型（ok: true）。</div>
+
+    <h2 class="anchor" id="api-config-test">3.4 <span class="badge b-post">POST</span> /api/config/test-provider — 测试连通性</h2>
+    <pre><code><span class="ep">POST</span> /api/config/test-provider
+{ 同上 ProviderConfig }
+
+→ 200 { "ok": true, "message": "Ollama 本地 (ornith-1.5:9b) 连接成功" }
+→ 200 { "ok": false, "message": "无法连接到 ...（Ollama 服务未启动或地址不对）" }</code></pre>
+
+    <h2 class="anchor" id="api-mcp-test">3.5 <span class="badge b-post">POST</span> /api/mcp/test — 测试 MCP 连接</h2>
+    <p>请求体为完整 <code>McpServerConfig</code>。→ <code>{ "ok": true, "message": "已连接，发现 N 个工具" }</code> 或 <code>{ "ok": false, "message": "原因" }</code></p>
+
+    <h2 class="anchor" id="api-mcp-refresh">3.6 <span class="badge b-post">POST</span> /api/mcp/refresh — 刷新 MCP 会话</h2>
+    <pre><code><span class="ep">POST</span> /api/mcp/refresh
+{ "id": "everything" }
+→ 200 { "ok": true, "message": "已重新连接" }
+→ 404 { "ok": false, "message": "未找到 MCP Server: everything" }</code></pre>
+
+    <h2 class="anchor" id="api-mcp-tools">3.7 <span class="badge b-get">GET</span> /api/mcp/tools — 列出 MCP 工具（可选）</h2>
+    <pre><code>→ 200 [ { "serverId": "everything", "serverName": "...", "tools": [{ "name": "mcp__everything__echo", "description": "Echo 工具" }] } ]</code></pre>
+
+    <h2 class="anchor" id="api-skills">3.8 <span class="badge b-get">GET</span> /api/skills — 技能列表</h2>
+    <pre><code>→ 200 {
+  "builtins": [{ "id": "get_current_time", "name": "获取当前时间", "description": "...", "enabled": true, "parameters": { "type": "object", "properties": {}, "required": [] } }],
+  "active":   [{ "id": "get_current_time", "name": "获取当前时间", "description": "...", "kind": "builtin", "mcpServerId": null }],
+  "errors": []
+}</code></pre>
+
+    <h2 class="anchor" id="api-health">3.9 <span class="badge b-get">GET</span> /api/health — 健康检查</h2>
+    <pre><code>→ 200 { "ok": true, "providers": [...], "activeProviderId": "ollama-demo", "mcpServers": [...], "skills": ["获取当前时间", ...] }</code></pre>
+
+    <h2 class="anchor" id="api-chat">3.10 <span class="badge b-sse">POST</span> /api/chat — 流式对话（核心，SSE）</h2>
+    <pre><code><span class="ep">POST</span> /api/chat
+Content-Type: application/json
+{ "messages": [{ "role": "user", "content": "现在几点？" }], "providerId": "ollama-demo", "model": "ornith-1.5:9b" }</code></pre>
+    <p>响应 <code>Content-Type: text/event-stream; charset=utf-8</code>，事件格式：<code>event: &lt;名&gt;\ndata: &lt;JSON&gt;\n\n</code>。服务端设置 <code>Cache-Control: no-cache, no-transform</code>、<code>X-Accel-Buffering: no</code>、立即 flush；每 15s 发一行 <code>: ping</code> 心跳。</p>
+    <table>
+      <tr><th>事件</th><th>data 字段</th><th>时机</th></tr>
+      <tr><td><code>info</code></td><td>{ "text" }</td><td>流程提示（居中显示）</td></tr>
+      <tr><td><code>tool_start</code></td><td>{ "name", "id", "args" }</td><td>工具开始执行</td></tr>
+      <tr><td><code>tool_result</code></td><td>{ "name", "id", "result"?, "error"? }</td><td>工具执行完成（result/error 二选一）</td></tr>
+      <tr><td><code>delta</code></td><td>{ "text" }</td><td><b>LLM 流式增量文本（逐 token）</b></td></tr>
+      <tr><td><code>done</code></td><td>{ "usage"? }</td><td>正常结束，随后关闭流</td></tr>
+      <tr><td><code>error</code></td><td>{ "message" }</td><td>异常终止，随后关闭流</td></tr>
+    </table>
+    <pre><code><span class="ep">event: info</span>
+<span class="en">data: {"text":"已加载 4 个技能（4 个工具）"}</span>
+
+<span class="ep">event: tool_start</span>
+<span class="en">data: {"name":"get_current_time","id":"call_1","args":"{}"}</span>
+
+<span class="ep">event: tool_result</span>
+<span class="en">data: {"name":"get_current_time","id":"call_1","result":{"iso":"2026-09-27T14:00:00.000Z","timezone":"Asia/Shanghai"}}</span>
+
+<span class="ep">event: delta</span>
+<span class="en">data: {"text":"现在是 22:00，今天是 2026 年 9 月 27 日。"}</span>
+
+<span class="ep">event: done</span>
+<span class="en">data: {"usage":{"eval_count":64}}</span></code></pre>
+
+    <h2 class="anchor" id="provider-abstraction">4.1 统一 LLM Provider 适配层</h2>
+    <table>
+      <tr><th>方法</th><th>入参</th><th>出参</th><th>说明</th></tr>
+      <tr><td>chat(req)</td><td>{ model, messages, tools?, temperature?, maxTokens?, onEvent }</td><td>onEvent 流式回调</td><td>逐 token 回调 text-delta；识别 tool_calls 回调 tool-call；结束回调 done</td></tr>
+      <tr><td>test()</td><td>—</td><td>{ ok, message }</td><td>轻量连通性测试</td></tr>
+      <tr><td>listModels()</td><td>—</td><td>string[]</td><td>拉取模型列表</td></tr>
+    </table>
+    <p>厂商类型：<code>openai</code>（OpenAI 兼容 /v1/chat/completions 流式）、<code>anthropic</code>（Messages API）、<code>gemini</code>（generateContent 流式）、<code>ollama</code>（/api/chat NDJSON 流式）。新厂商可在「＋ 添加 Provider」预设中扩展。</p>
+
+    <h2 class="anchor" id="tool-injection">4.2 工具定义注入</h2>
+    <p>每次对话把启用技能转为 function schema 传入 LLM；建议同时把技能清单以文本追加到系统提示词尾部。启用规则：builtin 启用 → 注入函数；mcp 启用且绑定 server 启用 → 动态注入其全部工具。</p>
+    <pre><code>{ "type": "function", "function": { "name": "get_current_time", "description": "获取当前日期与时间（含时区）", "parameters": { "type": "object", "properties": {}, "required": [] } } }</code></pre>
+
+    <h2 class="anchor" id="agent-loop">4.3 Agent 工具循环</h2>
+    <pre><code>for round in 1..maxToolRounds:
+    result = provider.chat(messages, tools)      # 流式输出 delta
+    if 无 tool_calls: 结束（emit done）
+    messages += assistant(toolCalls)
+    for each tool_call:
+        emit tool_start
+        result = executeSkill(tool_call)          # builtin 函数 或 MCP 调用
+        emit tool_result
+        messages += tool(toolCallId, JSON(result))
+    # 继续下一轮，把工具结果喂回 LLM</code></pre>
+    <div class="box">上限 maxToolRounds（默认 8）；工具结果截断（如 12KB）防膨胀；客户端断开（req close）时中止厂商请求。</div>
+
+    <h2 class="anchor" id="call-map">5. 前端调用自查表</h2>
+    <table>
+      <tr><th>页面/行为</th><th>调用接口</th></tr>
+      <tr><td>应用启动健康探测</td><td>GET /api/health</td></tr>
+      <tr><td>设置中心加载</td><td>GET /api/config · GET /api/skills</td></tr>
+      <tr><td>设置中心保存</td><td>PUT /api/config</td></tr>
+      <tr><td>Provider 测试/拉模型</td><td>POST /api/config/test-provider · POST /api/config/models</td></tr>
+      <tr><td>MCP 测试/重连</td><td>POST /api/mcp/test · POST /api/mcp/refresh</td></tr>
+      <tr><td>发送消息/流式</td><td>POST /api/chat（SSE）</td></tr>
+      <tr><td>前端资源/PWA/分享</td><td>/ · /assets/* · /manifest.json · /sw.js · /icons/*（静态）</td></tr>
+    </table>
+
+    <h2 class="anchor" id="default-config">6. 默认配置参考（后端初始化示例）</h2>
+    <p>首次启动无持久化配置时返回以下默认值（所有中文必须 UTF-8，勿用 <code>?</code> 占位）：</p>
+    <pre><code>{
+  "activeProviderId": "openai-demo",
+  "providers": [
+    { "id": "openai-demo", "type": "openai", "name": "OpenAI 兼容", "baseURL": "https://api.openai.com/v1", "apiKey": "", "model": "gpt-4o-mini", "temperature": 0.7, "maxTokens": 4096, "enabled": true, "models": [] },
+    { "id": "ollama-demo", "type": "ollama", "name": "Ollama 本地", "baseURL": "http://localhost:11434", "apiKey": "", "model": "llama3.1", "temperature": 0.7, "maxTokens": 4096, "enabled": false, "models": [] }
+  ],
+  "mcpServers": [],
+  "skills": [
+    { "id": "get_current_time", "name": "获取当前时间", "description": "获取当前日期与时间（含时区）", "type": "builtin", "enabled": true },
+    { "id": "calculator", "name": "计算器", "description": "执行精确的四则运算表达式", "type": "builtin", "enabled": true }
+  ],
+  "systemPrompt": "你是一个通用 AI 助手。回答保持简洁、准确、结构化，使用 Markdown 格式。",
+  "maxToolRounds": 8
+}</code></pre>
+
+    <h2 class="anchor" id="verify">7. 快速验证清单</h2>
+    <ol>
+      <li><code>GET /api/health</code> 返回 <code>{ "ok": true }</code></li>
+      <li><code>GET /api/config</code> 中文无乱码、apiKey 已掩码</li>
+      <li><code>PUT /api/config</code> 保存后重新 GET 一致</li>
+      <li><code>POST /api/chat</code> 返回 SSE：info → delta×N → done</li>
+      <li>浏览器打开 <code>/</code>：对话、设置中心四域、保存配置可用；移动端底部导航正常；/manifest.json 可达</li>
+    </ol>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# 运行时数据（自动生成）
+server/data/
+*.local
+.env
+
+# 依赖
+node_modules/
+
+# 构建产物
+client/dist/
+server/dist/
+
+# 日志与临时文件
+*.log
+*.tsbuildinfo
+.DS_Store
