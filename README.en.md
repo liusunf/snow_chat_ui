@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://github.com/liusunf/snow_chat_ui" target="_blank">
- <img src="client/public/icons/icon-192.png" height="80" alt="ChatUI LLM Workbench"/>
+ <img src="client/public/icons/icon-192.png" height="80" alt="snow_chat_ui"/>
 </a>
 </p>
 <div align="center">
@@ -16,13 +16,13 @@
 <a>📱 PWA</a>
 </div>
 
-# ChatUI LLM Workbench
+# snow_chat_ui
 
 [**中文**](README.md) · English　|　Full Chinese version at [README.md](README.md)
 
 ## Introduction
 
-ChatUI LLM Workbench is a universal LLM chat window built on **ChatUI ([@chatui/core](https://chatui.io))**. Key strengths: **unified LLM Provider config, MCP tools and Skill system out of the box**, friendly LobeChat / Dify-style UI, decoupled frontend/backend and easy deployment. Works across all web devices (PC / tablet / phone) + installable PWA.
+snow_chat_ui is a universal LLM chat window built on **ChatUI ([@chatui/core](https://chatui.io))**. Key strengths: **unified LLM Provider config, MCP tools and Skill system out of the box**, friendly LobeChat / Dify-style UI, decoupled frontend/backend and easy deployment. Works across all web devices (PC / tablet / phone) + installable PWA.
 
 > Want to plug this UI into your own backend? See the **[Backend API docs](./docs/API.md)** (online at `http://<host>/api-docs.html`) — implement the endpoints as documented and all AI interactions work.
 
@@ -68,7 +68,7 @@ ChatUI LLM Workbench is a universal LLM chat window built on **ChatUI ([@chatui/
 ### Showcase
 
 <p align="center">
- <img src="client/public/icons/og-cover.png" alt="ChatUI LLM Workbench share image" width="640"/>
+ <img src="client/public/icons/og-cover.png" alt="snow_chat_ui share image" width="640"/>
 </p>
 
 ## Quick Start

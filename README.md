@@ -1,6 +1,6 @@
 <p align="center">
 <a href="https://github.com/liusunf/snow_chat_ui" target="_blank">
- <img src="client/public/icons/icon-192.png" height="80" alt="ChatUI LLM Workbench"/>
+ <img src="client/public/icons/icon-192.png" height="80" alt="snow_chat_ui"/>
 </a>
 </p>
 <div align="center">
@@ -16,13 +16,13 @@
 <a>📱 PWA</a>
 </div>
 
-# ChatUI LLM Workbench
+# snow_chat_ui
 
 **[English](README.en.md)** · 中文　|　完整英文版见 [README.en.md](README.en.md)
 
 ## 项目介绍
 
-ChatUI LLM Workbench 是一款基于 **ChatUI（[@chatui/core](https://chatui.io)）** 的通用大模型对话聊天窗口。主要优点是：**统一 LLM Provider 配置、MCP 工具与 Skill 技能系统开箱即用**，界面设计友好（LobeChat / Dify 风格），前后端分离、部署简单。支持 Web 端全设备（PC / 平板 / 手机）+ PWA 可安装。
+snow_chat_ui 是一款基于 **ChatUI（[@chatui/core](https://chatui.io)）** 的通用大模型对话聊天窗口。主要优点是：**统一 LLM Provider 配置、MCP 工具与 Skill 技能系统开箱即用**，界面设计友好（LobeChat / Dify 风格），前后端分离、部署简单。支持 Web 端全设备（PC / 平板 / 手机）+ PWA 可安装。
 
 > 需要把本 UI 接入自己的后端？见 **[接口对接文档](./docs/API.md)**（在线版 `http://<host>/api-docs.html`）——按文档实现后端接口即可驱动全部 AI 交互。
 
@@ -68,7 +68,7 @@ ChatUI LLM Workbench 是一款基于 **ChatUI（[@chatui/core](https://chatui.io
 ### 系统展示
 
 <p align="center">
- <img src="client/public/icons/og-cover.png" alt="ChatUI LLM Workbench 分享图" width="640"/>
+ <img src="client/public/icons/og-cover.png" alt="snow_chat_ui 分享图" width="640"/>
 </p>
 
 ## 快速开始

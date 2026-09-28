@@ -1,4 +1,4 @@
-/* ChatUI LLM Workbench — Service Worker
+/* snow_chat_ui — Service Worker
  * 策略：
  *  - 预缓存应用壳（index.html / manifest / icons）
  *  - 静态资源（/assets/*）stale-while-revalidate

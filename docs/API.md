@@ -1,4 +1,4 @@
-# ChatUI LLM Workbench — 后端接口对接文档
+# snow_chat_ui — 后端接口对接文档
 
 > **目标**：本 UI（前端）是**纯静态产物**，所有 AI 交互（LLM Provider 统一配置、MCP 工具、Skill 技能、流式对话）都通过一组约定好的 HTTP 接口与后端对接。**只要按照本文档实现这些后端接口，并把前端构建产物托管在服务上，即可完整驱动这套 UI 的全部功能。**
 
@@ -36,7 +36,7 @@
 |---|---|---|
 | `/` | `index.html` | 入口页，含 OG/Twitter Card/meta 标签（已内置） |
 | `/assets/*` | JS/CSS 构建产物 | 由 Vite 生成，`index.html` 自动引用 |
-| `/manifest.json` | PWA 清单 | 名称 `ChatUI LLM Workbench`、图标、主题色 |
+| `/manifest.json` | PWA 清单 | 名称 `snow_chat_ui`、图标、主题色 |
 | `/sw.js` | Service Worker | PWA 离线缓存（如不想支持可省略，但需保证前端未注册 SW） |
 | `/icons/icon-192.png`、`/icons/icon-512.png` | PWA 图标 | 192/512 px |
 | `/icons/apple-touch-icon.png` | iOS 图标 | 180 px |

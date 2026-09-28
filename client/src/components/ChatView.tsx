@@ -305,7 +305,7 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
         {empty && (
           <div className="empty-welcome">
             <div className="w-icon">💬</div>
-            <div className="w-title">ChatUI LLM Workbench</div>
+            <div className="w-title">snow_chat_ui</div>
             <div className="w-sub">{t('chat.welcomeSub')}</div>
             <div className="w-suggest" key={suggestIdx}>
               {suggestGroup.map((q) => (

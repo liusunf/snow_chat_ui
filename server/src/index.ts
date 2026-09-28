@@ -1,5 +1,5 @@
 /**
- * ChatUI LLM Workbench — 服务端入口
+ * snow_chat_ui — 服务端入口
  * 提供：统一 LLM Provider 配置 / MCP / Skill / SSE 聊天接口 + 前端静态托管
  */
 
@@ -57,12 +57,12 @@ app.get(/^\/(?!api\/).*/, (_req, res) => {
 app.listen(PORT, HOST, async () => {
   try {
     const cfg = await loadConfig();
-    console.log(`[chatui-workbench] server 已启动: http://localhost:${PORT}`);
-    console.log(`[chatui-workbench] 可用 Provider: ${cfg.providers.filter((p) => p.enabled).map((p) => p.name).join(', ') || '无（请在配置面板添加）'}`);
-    console.log(`[chatui-workbench] 已启用技能: ${cfg.skills.filter((s) => s.enabled).map((s) => s.name).join(', ') || '无'}`);
-    console.log(`[chatui-workbench] MCP Server: ${cfg.mcpServers.filter((m) => m.enabled).map((m) => m.name).join(', ') || '无'}`);
+    console.log(`[snow_chat_ui] server 已启动: http://localhost:${PORT}`);
+    console.log(`[snow_chat_ui] 可用 Provider: ${cfg.providers.filter((p) => p.enabled).map((p) => p.name).join(', ') || '无（请在配置面板添加）'}`);
+    console.log(`[snow_chat_ui] 已启用技能: ${cfg.skills.filter((s) => s.enabled).map((s) => s.name).join(', ') || '无'}`);
+    console.log(`[snow_chat_ui] MCP Server: ${cfg.mcpServers.filter((m) => m.enabled).map((m) => m.name).join(', ') || '无'}`);
   } catch (e) {
-    console.error('[chatui-workbench] 配置加载失败:', e);
+    console.error('[snow_chat_ui] 配置加载失败:', e);
   }
 });
 

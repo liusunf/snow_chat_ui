@@ -1,5 +1,5 @@
 {
-  "name": "ChatUI LLM Workbench",
+  "name": "snow_chat_ui",
   "short_name": "LLM Chat",
   "description": "通用大模型对话工作台：统一 LLM Provider 配置 + MCP + Skill，基于 ChatUI",
   "id": "/",
