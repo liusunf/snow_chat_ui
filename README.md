@@ -4,16 +4,16 @@
 </a>
 </p>
 <div align="center">
-[![GitHub stars](https://img.shields.io/github/stars/liusunf/snow_chat_ui?logo=github&style=flat-square)](https://github.com/liusunf/snow_chat_ui)
-[![GitHub forks](https://img.shields.io/github/forks/liusunf/snow_chat_ui?logo=github&style=flat-square)](https://github.com/liusunf/snow_chat_ui)
-[![GitHub license](https://img.shields.io/github/license/liusunf/snow_chat_ui?style=flat-square)](https://github.com/liusunf/snow_chat_ui)
-[![React](https://img.shields.io/badge/React-18.3-blue?logo=react&style=flat-square)]()
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&style=flat-square)]()
-[![Vite](https://img.shields.io/badge/Vite-5-purple?logo=vite&style=flat-square)]()
-[![Express](https://img.shields.io/badge/Express-4-green?logo=express&style=flat-square)]()
-[![ChatUI](https://img.shields.io/badge/ChatUI-core%203.8-orange?style=flat-square)]()
-[![MCP](https://img.shields.io/badge/MCP-Protocol-181717?style=flat-square)]()
-[![PWA](https://img.shields.io/badge/PWA-Offline%20Ready-9cf?style=flat-square)]()
+<a href="https://github.com/liusunf/snow_chat_ui">⭐ Stars</a> ·
+<a href="https://github.com/liusunf/snow_chat_ui">🍴 Forks</a> ·
+<a href="https://github.com/liusunf/snow_chat_ui">📄 MIT License</a> ·
+<a>⚛️ React 18</a> ·
+<a>🟦 TypeScript 5</a> ·
+<a>⚡ Vite 5</a> ·
+<a>🚀 Express 4</a> ·
+<a>💬 ChatUI 3.8</a> ·
+<a>🔌 MCP</a> ·
+<a>📱 PWA</a>
 </div>
 
 # ChatUI LLM Workbench
