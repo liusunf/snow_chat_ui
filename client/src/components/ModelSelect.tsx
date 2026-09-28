@@ -1,6 +1,7 @@
 /** ModelSelect：LobeChat 风格模型下拉（厂商图标 + 搜索过滤 + 当前项高亮），可手输自定义模型 */
 import { useEffect, useRef, useState } from 'react';
 import { ProviderBrand } from './ProviderBrand';
+import { useI18n } from '../i18n';
 
 interface ModelSelectProps {
   /** 可选模型列表（白名单过滤后） */
@@ -13,6 +14,7 @@ interface ModelSelectProps {
 }
 
 export function ModelSelect({ models, value, onChange, brandName, brandType, placeholder }: ModelSelectProps) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState('');
   const boxRef = useRef<HTMLDivElement>(null);
@@ -69,7 +71,7 @@ export function ModelSelect({ models, value, onChange, brandName, brandType, pla
                 {m === value && <span className="model-select-check">✓</span>}
               </button>
             ))}
-            {filtered.length === 0 && <div className="model-select-empty">无匹配模型</div>}
+            {filtered.length === 0 && <div className="model-select-empty">{t('modelSelect.empty')}</div>}
           </div>
         </div>
       )}

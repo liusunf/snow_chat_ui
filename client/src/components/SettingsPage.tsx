@@ -10,6 +10,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { api, getApiBase, setApiBase } from '../api';
 import type { AppConfig, McpServerConfig, ProviderConfig, ProviderType } from '../types';
+import { useI18n } from '../i18n';
 import { BUILTIN_SKILL_DEFS } from './builtinSkills';
 import { FALLBACK_OPENAI_MODELS, PROVIDER_PRESETS, presetToProvider, type ProviderPreset } from './providerPresets';
 import { ProviderBrand, resolveProviderKey } from './ProviderBrand';
@@ -23,17 +24,10 @@ interface Props {
 
 type Tab = 'providers' | 'mcp' | 'skills' | 'advanced';
 
-const TAB_DEFS: Array<{ id: Tab; label: string; icon: string }> = [
-  { id: 'providers', label: '模型服务', icon: '🧠' },
-  { id: 'mcp', label: '工具连接', icon: '🔌' },
-  { id: 'skills', label: '技能', icon: '🎯' },
-  { id: 'advanced', label: '高级与数据', icon: '⚙️' },
-];
-
 const EMPTY_PROVIDER: ProviderConfig = {
   id: `p_${Date.now()}`,
   type: 'openai',
-  name: '自定义 Provider',
+  name: '',
   baseURL: 'https://api.openai.com/v1',
   apiKey: '',
   model: 'gpt-4o-mini',
@@ -45,20 +39,13 @@ const EMPTY_PROVIDER: ProviderConfig = {
 
 const EMPTY_MCP: McpServerConfig = {
   id: `mcp_${Date.now()}`,
-  name: '新 MCP Server',
+  name: '',
   transport: 'stdio',
   command: 'npx',
   args: ['-y', '@modelcontextprotocol/server-everything'],
   env: {},
   url: '',
   enabled: true,
-};
-
-const TYPE_BADGE: Record<ProviderType, string> = {
-  openai: 'OpenAI 兼容',
-  anthropic: 'Claude',
-  gemini: 'Gemini',
-  ollama: 'Ollama',
 };
 
 const TYPE_COLOR: Record<ProviderType, string> = {
@@ -69,6 +56,44 @@ const TYPE_COLOR: Record<ProviderType, string> = {
 };
 
 export function SettingsPage({ config, onSave, onBack }: Props) {
+  const { t, lang, setLang } = useI18n();
+  const TAB_DEFS: Array<{ id: Tab; label: string; icon: string }> = [
+    { id: 'providers', label: t('settings.tabProviders'), icon: '🧠' },
+    { id: 'mcp', label: t('settings.tabMcp'), icon: '🔌' },
+    { id: 'skills', label: t('settings.tabSkills'), icon: '🎯' },
+    { id: 'advanced', label: t('settings.tabAdvanced'), icon: '⚙️' },
+  ];
+  const TYPE_BADGE: Record<ProviderType, string> = {
+    openai: t('settings.typeOpenai'),
+    anthropic: 'Claude',
+    gemini: 'Gemini',
+    ollama: 'Ollama',
+  };
+  const SKILL_NAME: Record<string, string> = {
+    get_current_time: t('skill.time.name'),
+    calculator: t('skill.calc.name'),
+    get_weather: t('skill.weather.name'),
+    fetch_url: t('skill.fetch.name'),
+  };
+  const SKILL_DESC: Record<string, string> = {
+    get_current_time: t('skill.time.desc'),
+    calculator: t('skill.calc.desc'),
+    get_weather: t('skill.weather.desc'),
+    fetch_url: t('skill.fetch.desc'),
+  };
+  const PRESET_HINT: Record<string, string> = {
+    'OpenAI': t('preset.openai'),
+    'DeepSeek': t('preset.deepseek'),
+    'Moonshot Kimi': t('preset.kimi'),
+    '智谱 GLM': t('preset.glm'),
+    '通义千问': t('preset.qwen'),
+    'Groq': t('preset.groq'),
+    'OpenRouter': t('preset.openrouter'),
+    '本地 vLLM': t('preset.vllm'),
+    'Anthropic Claude': t('preset.claude'),
+    'Google Gemini': t('preset.gemini'),
+    'Ollama 本地': t('preset.ollama'),
+  };
   const [draft, setDraft] = useState<AppConfig>(config);
   const [tab, setTab] = useState<Tab>('providers');
   const [saving, setSaving] = useState(false);
@@ -122,10 +147,11 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
 
   const addProvider = (preset?: ProviderPreset) => {
     const base = preset ? presetToProvider(preset, Date.now() % 1000) : { ...EMPTY_PROVIDER, id: `p_${Date.now()}` };
+    if (!base.name) base.name = t('settings.customProviderName');
     setDraft((d) => ({ ...d, providers: [...d.providers, base] }));
     setPickerOpen(false);
     setSearchTerm('');
-    showToast(`已添加「${base.name}」，填入 API Key 后保存`);
+    showToast(t('settings.toastAdded', [base.name]));
   };
 
   const removeProvider = (id: string) => {
@@ -169,7 +195,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
         if (!pc.model || !r.models.includes(pc.model)) {
           updateProvider(id, { model: r.models[0] });
         }
-        showToast(`获取到 ${r.models.length} 个模型，勾选即白名单`);
+        showToast(t('settings.toastFetched', [r.models.length]));
       } else if (pc.type !== 'ollama') {
         const fallback =
           pc.type === 'openai'
@@ -178,9 +204,9 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
               ? ['claude-3-5-sonnet-latest', 'claude-3-5-haiku-latest', 'claude-3-opus-latest', 'claude-3-haiku-latest']
               : ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-pro', 'gemini-1.5-flash'];
         setFetchedModels((m) => ({ ...m, [id]: fallback }));
-        showToast(`在线拉取失败（${r.message ?? '未知原因'}），已提供常见模型候选`, true);
+        showToast(t('settings.toastFetchFail', [r.message ?? t('settings.toastNoModels')]), true);
       } else {
-        showToast(r.message ?? '未获取到模型', true);
+        showToast(r.message ?? t('settings.toastNoModels'), true);
       }
     } catch (e) {
       if (pc.type !== 'ollama') {
@@ -191,7 +217,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
               ? ['claude-3-5-sonnet-latest', 'claude-3-5-haiku-latest', 'claude-3-opus-latest', 'claude-3-haiku-latest']
               : ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-pro', 'gemini-1.5-flash'];
         setFetchedModels((m) => ({ ...m, [id]: fallback }));
-        showToast(`在线拉取失败（${e instanceof Error ? e.message : String(e)}），已提供常见模型候选`, true);
+        showToast(t('settings.toastFetchFail', [e instanceof Error ? e.message : String(e)]), true);
       } else {
         showToast(e instanceof Error ? e.message : String(e), true);
       }
@@ -216,7 +242,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
     }));
 
   const addMcp = () => {
-    const m: McpServerConfig = { ...EMPTY_MCP, id: `mcp_${Date.now()}` };
+    const m: McpServerConfig = { ...EMPTY_MCP, id: `mcp_${Date.now()}`, name: t('settings.newMcpName') };
     setDraft((d) => ({ ...d, mcpServers: [...d.mcpServers, m] }));
   };
 
@@ -264,7 +290,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
           {
             id: `mcp__${mcpId}`,
             name: `MCP: ${server?.name ?? mcpId}`,
-            description: `调用 ${server?.name ?? mcpId} 的全部 MCP 工具`,
+            description: t('settings.mcpSkillDesc', [server?.name ?? mcpId]),
             type: 'mcp' as const,
             mcpServerId: mcpId,
             enabled,
@@ -283,14 +309,14 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
     a.download = `chatui-config-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('配置已导出（含 API Key，请妥善保管）');
+    showToast(t('settings.toastExported'));
   };
 
   const importConfig = async (file: File) => {
     try {
       const text = await file.text();
       const parsed = JSON.parse(text) as Partial<AppConfig>;
-      if (!Array.isArray(parsed.providers)) throw new Error('缺少 providers 数组');
+      if (!Array.isArray(parsed.providers)) throw new Error(t('settings.missingProviders'));
       const merged: AppConfig = {
         ...draft,
         ...parsed,
@@ -300,9 +326,9 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
         maxToolRounds: parsed.maxToolRounds ?? 8,
       };
       setDraft(merged);
-      showToast('已载入导入配置，请点击「保存配置」生效');
+      showToast(t('settings.toastImported'));
     } catch (e) {
-      showToast(`导入失败：${e instanceof Error ? e.message : String(e)}`, true);
+      showToast(t('settings.toastImportFail', [e instanceof Error ? e.message : String(e)]), true);
     }
   };
 
@@ -310,7 +336,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
     setSaving(true);
     try {
       await onSave(draft);
-      showToast('配置已保存 ✓');
+      showToast(t('settings.toastSaved'));
     } catch (e) {
       showToast(e instanceof Error ? e.message : String(e), true);
     } finally {
@@ -321,19 +347,27 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
   return (
     <div className="settings-page">
       <header className="settings-topbar">
-        <button className="icon-btn" onClick={onBack} title="返回聊天">
+        <button className="icon-btn" onClick={onBack} title={t('settings.back')}>
           ←
         </button>
-        <h2 className="settings-title">设置中心</h2>
+        <h2 className="settings-title">{t('settings.title')}</h2>
         <div className="settings-topbar-right">
-          <button className="btn btn-ghost btn-sm" onClick={() => window.open('/api-docs.html', '_blank', 'noopener')} title="后端接口对接文档">
-            📖 接口文档
+          <button
+            className="btn btn-ghost btn-sm lang-btn"
+            onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+            title={t('common.langTitle')}
+            style={{ fontWeight: 600 }}
+          >
+            🌐 {t('common.langBtn')}
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={() => window.open('/api-docs.html', '_blank', 'noopener')} title={t('settings.apiDocsTitle')}>
+            {t('settings.apiDocs')}
           </button>
           <button className="btn btn-ghost btn-sm" onClick={exportConfig}>
-            导出
+            {t('settings.export')}
           </button>
           <button className="btn btn-ghost btn-sm" onClick={() => importRef.current?.click()}>
-            导入
+            {t('settings.import')}
           </button>
           <input
             ref={importRef}
@@ -347,7 +381,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
             }}
           />
           <button className="btn btn-primary btn-sm" onClick={save} disabled={saving}>
-            {saving ? '保存中…' : '保存配置'}
+            {saving ? t('settings.saving') : t('settings.save')}
           </button>
         </div>
       </header>
@@ -367,7 +401,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
           {tab === 'providers' && (
             <section className="config-section">
               <h3>
-                LLM Provider <span className="badge">{counts.providers} 启用</span>
+                LLM Provider <span className="badge">{t('settings.enabled', [counts.providers])}</span>
               </h3>
               {draft.providers.map((p) => {
                 const models = fetchedModels[p.id] ?? [];
@@ -377,7 +411,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                     <div className="card-head">
                       <span
                         className="radio-dot"
-                        title={draft.activeProviderId === p.id ? '当前默认 Provider' : '设为默认 Provider'}
+                        title={draft.activeProviderId === p.id ? t('settings.defaultProviderTitle') : t('settings.setDefaultTitle')}
                         onClick={() => patch({ activeProviderId: p.id })}
                         style={draft.activeProviderId === p.id ? { background: TYPE_COLOR[p.type], borderColor: TYPE_COLOR[p.type] } : undefined}
                       />
@@ -389,21 +423,21 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                         <span>{TYPE_BADGE[p.type]}</span>
                       </span>
                       <span className="name">{p.name}</span>
-                      {draft.activeProviderId === p.id && <span className="def-tag">默认</span>}
+                      {draft.activeProviderId === p.id && <span className="def-tag">{t('settings.defaultTag')}</span>}
                       <span className="actions">
-                        <button onClick={() => fetchModels(p.id)} disabled={fetchingModels === p.id} title="拉取模型列表">
-                          {fetchingModels === p.id ? '拉取中…' : '拉模型'}
+                        <button onClick={() => fetchModels(p.id)} disabled={fetchingModels === p.id} title={t('settings.fetchModels')}>
+                          {fetchingModels === p.id ? t('settings.fetching') : t('settings.fetchModels')}
                         </button>
                         <button onClick={() => testProvider(p.id)} disabled={testing === p.id}>
-                          {testing === p.id ? '测试中…' : '测试'}
+                          {testing === p.id ? t('settings.testing') : t('settings.test')}
                         </button>
                         <button onClick={() => removeProvider(p.id)} className="danger">
-                          删除
+                          {t('settings.delete')}
                         </button>
                       </span>
                     </div>
                     <div className="field">
-                      <label>类型</label>
+                      <label>{t('settings.type')}</label>
                       <select value={p.type} onChange={(e) => updateProvider(p.id, { type: e.target.value as ProviderType })}>
                         {(Object.keys(TYPE_BADGE) as ProviderType[]).map((t) => (
                           <option key={t} value={t}>
@@ -413,23 +447,23 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                       </select>
                     </div>
                     <div className="field">
-                      <label>名称</label>
+                      <label>{t('settings.name')}</label>
                       <input value={p.name} onChange={(e) => updateProvider(p.id, { name: e.target.value })} />
                     </div>
                     {p.type !== 'ollama' && (
                       <div className="field">
-                        <label>API Key</label>
+                        <label>{t('settings.apiKey')}</label>
                         <input
                           type="password"
                           value={p.apiKey ?? ''}
-                          placeholder={p.apiKey ? '已保存（留空保持不变）' : 'sk-...'}
+                          placeholder={p.apiKey ? t('settings.apiKeySaved') : 'sk-...'}
                           onChange={(e) => updateProvider(p.id, { apiKey: e.target.value })}
                           autoComplete="off"
                         />
                       </div>
                     )}
                     <div className="field">
-                      <label>{p.type === 'anthropic' ? 'API 地址（可留空用官方）' : 'Base URL'}</label>
+                      <label>{p.type === 'anthropic' ? t('settings.baseUrlAnthropic') : t('settings.baseUrl')}</label>
                       <input
                         value={p.baseURL ?? ''}
                         placeholder={
@@ -443,10 +477,10 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                         }
                         onChange={(e) => updateProvider(p.id, { baseURL: e.target.value })}
                       />
-                      <div className="hint">OpenAI 兼容地址指向 …/v1；支持 DeepSeek / Moonshot / 通义 / vLLM 等</div>
+                      <div className="hint">{t('settings.baseUrlHint')}</div>
                     </div>
                     <div className="field">
-                      <label>模型</label>
+                      <label>{t('settings.model')}</label>
                       <ModelSelect
                         models={allowModels}
                         value={p.model}
@@ -467,7 +501,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
 
                     {models.length > 0 && (
                       <div className="field">
-                        <label>模型白名单（勾选后仅显示这些模型；不勾选 = 全部）</label>
+                        <label>{t('settings.whitelistLabel')}</label>
                         <div
                           style={{
                             maxHeight: 150,
@@ -495,7 +529,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                               <span style={{ flex: 1, wordBreak: 'break-all', lineHeight: 1.4, minWidth: 0 }}>{m}</span>
                             </label>
                           ))}
-                          {models.length > 60 && <div style={{ fontSize: 11, color: 'var(--text-3)' }}>仅展示前 60 个</div>}
+                          {models.length > 60 && <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{t('settings.showFirst60')}</div>}
                         </div>
                       </div>
                     )}
@@ -506,9 +540,8 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                       onToggle={(e) => setAdvancedOpen((s) => ({ ...s, [p.id]: (e.target as HTMLDetailsElement).open }))}
                     >
                       <summary style={{ fontSize: 12, color: 'var(--text-2)', cursor: 'pointer', userSelect: 'none' }}>
-                        高级参数（Temperature / Max Tokens）
-                      </summary>
-                      <div style={{ marginTop: 6 }}>
+                        {t('settings.advancedParams')}
+                      </summary>                      <div style={{ marginTop: 6 }}>
                         <div className="field-row">
                           <div className="field">
                             <label>Temperature</label>
@@ -536,7 +569,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                     </details>
 
                     <div className="switch-row">
-                      <span>启用</span>
+                      <span>{t('settings.enable')}</span>
                       <label className="switch">
                         <input type="checkbox" checked={p.enabled} onChange={(e) => updateProvider(p.id, { enabled: e.target.checked })} />
                         <span className="slider" />
@@ -547,21 +580,21 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
               })}
 
               <button className="btn btn-primary btn-block" onClick={() => setPickerOpen(true)}>
-                ＋ 添加 Provider
+                {t('settings.addProvider')}
               </button>
               {pickerOpen && (
                 <div className="picker-mask" onClick={() => setPickerOpen(false)}>
                   <div className="picker-panel" onClick={(e) => e.stopPropagation()}>
                     <div className="picker-head">
-                      <span className="picker-title">选择供应商</span>
-                      <button className="icon-btn" onClick={() => setPickerOpen(false)} title="关闭">
+                      <span className="picker-title">{t('settings.pickerTitle')}</span>
+                      <button className="icon-btn" onClick={() => setPickerOpen(false)} title={t('settings.close')}>
                         ✕
                       </button>
                     </div>
                     <input
                       className="picker-search"
                       autoFocus
-                      placeholder="搜索供应商…（OpenAI / DeepSeek / Kimi / Claude…）"
+                      placeholder={t('settings.searchProvider')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -584,7 +617,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                           </span>
                           <span className="picker-body">
                             <span className="picker-name">{ps.name}</span>
-                            <span className="picker-hint">{ps.hint}</span>
+                            <span className="picker-hint">{PRESET_HINT[ps.name] ?? ps.hint}</span>
                           </span>
                         </button>
                       ))}
@@ -593,8 +626,8 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                           ＋
                         </span>
                         <span className="picker-body">
-                          <span className="picker-name">空白自定义</span>
-                          <span className="picker-hint">手动配置任意 OpenAI 兼容端点</span>
+                          <span className="picker-name">{t('settings.custom')}</span>
+                          <span className="picker-hint">{t('settings.customHint')}</span>
                         </span>
                       </button>
                     </div>
@@ -607,10 +640,10 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
           {tab === 'mcp' && (
             <section className="config-section">
               <h3>
-                MCP Server <span className="badge">{counts.mcp} 启用</span>
+                MCP Server <span className="badge">{t('settings.enabled', [counts.mcp])}</span>
               </h3>
               <p style={{ fontSize: 12, color: 'var(--text-3)', margin: '0 0 8px' }}>
-                Model Context Protocol：接入外部工具服务（stdio 进程 / SSE / HTTP）。
+                {t('settings.mcpDesc')}
               </p>
               {draft.mcpServers.map((m) => (
                 <div key={m.id} className="card">
@@ -618,36 +651,36 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                     <span className="name">{m.name}</span>
                     <span className="actions">
                       <button onClick={() => testMcp(m.id)} disabled={testMcpId === m.id}>
-                        {testMcpId === m.id ? '连接中…' : '测试'}
+                        {testMcpId === m.id ? t('settings.connecting') : t('settings.test')}
                       </button>
                       <button onClick={() => removeMcp(m.id)} className="danger">
-                        删除
+                        {t('settings.delete')}
                       </button>
                     </span>
                   </div>
                   <div className="field">
-                    <label>名称</label>
+                    <label>{t('settings.name')}</label>
                     <input value={m.name} onChange={(e) => updateMcp(m.id, { name: e.target.value })} />
                   </div>
                   <div className="field">
-                    <label>传输方式</label>
+                    <label>{t('settings.mcpTransport')}</label>
                     <select
                       value={m.transport}
                       onChange={(e) => updateMcp(m.id, { transport: e.target.value as McpServerConfig['transport'] })}
                     >
-                      <option value="stdio">stdio（本地进程）</option>
-                      <option value="sse">SSE（服务端）</option>
-                      <option value="http">HTTP/Streamable（服务端）</option>
+                      <option value="stdio">{t('settings.mcpStdio')}</option>
+                      <option value="sse">{t('settings.mcpSse')}</option>
+                      <option value="http">{t('settings.mcpHttp')}</option>
                     </select>
                   </div>
                   {m.transport === 'stdio' ? (
                     <>
                       <div className="field">
-                        <label>命令</label>
+                        <label>{t('settings.mcpCommand')}</label>
                         <input value={m.command ?? ''} onChange={(e) => updateMcp(m.id, { command: e.target.value })} />
                       </div>
                       <div className="field">
-                        <label>参数（逗号分隔）</label>
+                        <label>{t('settings.mcpArgs')}</label>
                         <input
                           value={(m.args ?? []).join(', ')}
                           onChange={(e) =>
@@ -655,13 +688,13 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                               args: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
                             })
                           }
-                          placeholder="例如: -y, @modelcontextprotocol/server-everything"
+                          placeholder={t('settings.mcpArgsPlaceholder')}
                         />
                       </div>
                     </>
                   ) : (
                     <div className="field">
-                      <label>服务地址</label>
+                      <label>{t('settings.mcpUrl')}</label>
                       <input
                         value={m.url ?? ''}
                         onChange={(e) => updateMcp(m.id, { url: e.target.value })}
@@ -671,8 +704,8 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                   )}
                   <div className="switch-row">
                     <span>
-                      启用
-                      <div className="desc">启用后工具作为 Skill 注入对话</div>
+                      {t('settings.enable')}
+                      <div className="desc">{t('settings.mcpEnabledDesc')}</div>
                     </span>
                     <label className="switch">
                       <input type="checkbox" checked={m.enabled} onChange={(e) => updateMcp(m.id, { enabled: e.target.checked })} />
@@ -680,7 +713,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                     </label>
                   </div>
                   <div className="switch-row">
-                    <span>暴露为技能</span>
+                    <span>{t('settings.mcpExpose')}</span>
                     <label className="switch">
                       <input
                         type="checkbox"
@@ -693,7 +726,7 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                 </div>
               ))}
               <button className="btn btn-ghost btn-block" onClick={addMcp}>
-                ＋ 添加 MCP Server
+                {t('settings.addMcp')}
               </button>
             </section>
           )}
@@ -701,15 +734,15 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
           {tab === 'skills' && (
             <section className="config-section">
               <h3>
-                Skill 技能 <span className="badge">{counts.skills} 启用</span>
+                {t('settings.tabSkills')} <span className="badge">{t('settings.enabled', [counts.skills])}</span>
               </h3>
               {BUILTIN_SKILL_DEFS.map((s) => {
                 const enabled = draft.skills.some((x) => x.id === s.id && x.enabled);
                 return (
                   <div key={s.id} className="switch-row">
                     <span>
-                      {s.name}
-                      <div className="desc">{s.description}</div>
+                      {SKILL_NAME[s.id] ?? s.name}
+                      <div className="desc">{SKILL_DESC[s.id] ?? s.description}</div>
                     </span>
                     <label className="switch">
                       <input type="checkbox" checked={enabled} onChange={(e) => toggleSkill(s.id, e.target.checked)} />
@@ -719,21 +752,21 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                 );
               })}
               <div style={{ marginTop: 16, fontSize: 12, color: 'var(--text-3)' }}>
-                MCP 工具通过「工具连接」页的「暴露为技能」开关注入，此处统一显示启用状态。
+                {t('settings.mcpInjectedHint')}
               </div>
             </section>
           )}
 
           {tab === 'advanced' && (
             <section className="config-section">
-              <h3>系统提示词</h3>
+              <h3>{t('settings.systemPrompt')}</h3>
               <div className="field">
                 <textarea rows={5} value={draft.systemPrompt ?? ''} onChange={(e) => patch({ systemPrompt: e.target.value })} />
-                <div className="hint">注入到每次对话的系统消息中，技能列表会自动追加。</div>
+                <div className="hint">{t('settings.systemPromptHint')}</div>
               </div>
-              <h3 style={{ marginTop: 18 }}>工具循环</h3>
+              <h3 style={{ marginTop: 18 }}>{t('settings.toolLoop')}</h3>
               <div className="field">
-                <label>最大工具循环轮数</label>
+                <label>{t('settings.maxToolRounds')}</label>
                 <input
                   type="number"
                   min={1}
@@ -742,34 +775,34 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
                   onChange={(e) => patch({ maxToolRounds: Number(e.target.value) })}
                 />
               </div>
-              <h3 style={{ marginTop: 18 }}>后端服务</h3>
+              <h3 style={{ marginTop: 18 }}>{t('settings.backendService')}</h3>
               <div className="field">
-                <label>后端 API 地址</label>
+                <label>{t('settings.backendApi')}</label>
                 <input
                   type="text"
                   value={apiBase}
                   onChange={(e) => handleApiBaseChange(e.target.value)}
-                  placeholder="留空 = 同源部署（当前站点 /api）"
+                  placeholder={t('settings.backendPlaceholder')}
                   spellCheck={false}
                 />
                 <div className="hint">
-                  前端独立部署时填写后端完整地址（如 http://192.168.1.10:8787），全部 API 请求将指向该服务；留空则请求当前站点 /api/*。修改后立即生效，并保存于本机。
+                  {t('settings.backendHint')}
                 </div>
               </div>
-              <h3 style={{ marginTop: 18 }}>数据管理</h3>
+              <h3 style={{ marginTop: 18 }}>{t('settings.dataMgmt')}</h3>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button className="btn btn-ghost" onClick={exportConfig}>
-                  ⬇ 导出配置 JSON
+                  {t('settings.exportJson')}
                 </button>
                 <button className="btn btn-ghost" onClick={() => importRef.current?.click()}>
-                  ⬆ 导入配置 JSON
+                  {t('settings.importJson')}
                 </button>
                 <button className="btn btn-ghost" onClick={() => window.open('/api-docs.html', '_blank', 'noopener')}>
-                  📖 接口对接文档
+                  {t('settings.docsBtn')}
                 </button>
               </div>
               <div className="hint" style={{ marginTop: 6 }}>
-                导出包含 API Key，请妥善保管；导入后需点击「保存配置」生效。
+                {t('settings.dataHint')}
               </div>
             </section>
           )}

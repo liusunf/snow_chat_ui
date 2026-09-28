@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import { I18nProvider } from './i18n';
 import './styles/global.css';
 
 // 生产环境注册 Service Worker（PWA 离线/可安装）
@@ -11,4 +12,8 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   });
 }
 
-createRoot(document.getElementById('root')!).render(<App />);
+createRoot(document.getElementById('root')!).render(
+  <I18nProvider>
+    <App />
+  </I18nProvider>,
+);

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from './api';
 import type { AppConfig, ChatMessage, Conversation } from './types';
+import { useI18n } from './i18n';
 import { ChatView } from './components/ChatView';
 import { Sidebar } from './components/Sidebar';
 import { SettingsPage } from './components/SettingsPage';
@@ -31,6 +32,7 @@ function persistConversations(list: Conversation[]) {
 }
 
 export default function App() {
+  const { t } = useI18n();
   const [config, setConfig] = useState<AppConfig | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>(() => loadConversations());
   const [activeConvId, setActiveConvId] = useState<string>('');
@@ -80,7 +82,7 @@ export default function App() {
 
   const makeConversation = (providerId: string): Conversation => ({
     id: `c_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-    title: '新对话',
+    title: t('common.noTitle'),
     createdAt: Date.now(),
     updatedAt: Date.now(),
     providerId: providerId || config?.activeProviderId || '',
@@ -124,11 +126,11 @@ export default function App() {
         if (c.id !== activeConvId) return c;
         const firstUser = msgs.find((m) => m.role === 'user');
         const title =
-          c.title !== '新对话'
+          c.title !== t('common.noTitle')
             ? c.title
             : firstUser?.content
               ? firstUser.content.slice(0, 20) + (firstUser.content.length > 20 ? '…' : '')
-              : '新对话';
+              : t('common.noTitle');
         return { ...c, messages: msgs, title, updatedAt: Date.now() };
       });
       persistConversations(next);
@@ -175,16 +177,16 @@ export default function App() {
     else setView(view === 'settings' ? 'chat' : 'settings');
   }, [view]);
 
-  const providerName = activeProvider?.name ?? (config ? '未配置' : '连接中…');
+  const providerName = activeProvider?.name ?? (config ? t('common.notConfigured') : t('common.connecting'));
   const modelLabel = activeProvider?.model ?? '';
 
   if (!config) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-2)', fontSize: 14, flexDirection: 'column', gap: 12 }}>
         <span className="spinner" style={{ width: 20, height: 20 }} />
-        <div>正在连接服务端（http://localhost:8787）…</div>
+        <div>{t('common.connectingServer', ['http://localhost:8787'])}</div>
         <div style={{ fontSize: 12, color: 'var(--text-3)' }}>
-          请先运行 <code>npm run dev</code> 启动前后端
+          {t('common.runDev')}
         </div>
       </div>
     );
@@ -226,9 +228,9 @@ export default function App() {
         <div className="chat-main">
           <div className="empty-welcome">
             <div className="w-icon">💬</div>
-            <div className="w-title">暂无会话</div>
+            <div className="w-title">{t('common.noConvsTitle')}</div>
             <button className="btn btn-primary" onClick={newConversation}>
-              新建对话
+              {t('common.newConversation')}
             </button>
           </div>
         </div>
@@ -238,15 +240,15 @@ export default function App() {
       <nav className="mobile-nav">
         <button className={view === 'conversations' ? 'active' : ''} onClick={() => setView(view === 'conversations' ? 'chat' : 'conversations')}>
           <span className="mi">💬</span>
-          会话
+          {t('common.chats')}
         </button>
         <button className={view === 'chat' ? 'active' : ''} onClick={() => setView('chat')}>
           <span className="mi">✏️</span>
-          聊天
+          {t('common.chat')}
         </button>
         <button onClick={() => setView('settings')}>
           <span className="mi">⚙️</span>
-          配置
+          {t('common.config')}
         </button>
       </nav>
     </div>

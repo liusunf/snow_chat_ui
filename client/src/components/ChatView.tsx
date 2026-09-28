@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Chat, { Bubble, useMessages } from '@chatui/core';
 import '@chatui/core/dist/index.css';
 import { streamChat } from '../api';
+import { useI18n } from '../i18n';
 import type { ChatMessage, Conversation } from '../types';
 import { Markdown } from './Markdown';
 
@@ -36,6 +37,7 @@ function toUiMessages(msgs: ChatMessage[]): UiMessage[] {
 }
 
 export function ChatView({ conversation, providerName, modelLabel, onMessagesChange, onOpenConversations, onOpenSettings }: Props) {
+  const { t, lang, setLang } = useI18n();
   const { messages, appendMsg, updateMsg, deleteMsg, resetList } = useMessages([]);
 
   const [streaming, setStreaming] = useState(false);
@@ -144,7 +146,7 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
             },
             onToolResult: (data) => {
               const resultStr = data.error
-                ? `错误：${data.error}`
+                ? `${t('chat.errPrefix')}${data.error}`
                 : typeof data.result === 'string'
                   ? data.result
                   : JSON.stringify(data.result, null, 2).slice(0, 2000);
@@ -156,9 +158,9 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
             onDone: () => {
               if (!assistantIdRef.current && !textBufRef.current) {
                 // 无文本输出
-                const id = appendMsg({ type: 'text', content: { text: '（完成）' }, position: 'left' });
+                const id = appendMsg({ type: 'text', content: { text: t('chat.done') }, position: 'left' });
                 assistantIdRef.current = id;
-                textBufRef.current = '（完成）';
+                textBufRef.current = t('chat.done');
               }
               setTyping(false);
               finalizeContext();
@@ -194,7 +196,7 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
         setTyping(false);
       }
     },
-    [appendMsg, updateMsg, setTyping, finalizeContext, conversation.providerId],
+    [appendMsg, updateMsg, setTyping, finalizeContext, conversation.providerId, t],
   );
 
   const handleStop = useCallback(() => {
@@ -220,7 +222,7 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
               <span>🔧</span>
               <span className="tool-name">{tool.name}</span>
               <span className={`tool-state ${state === 'ok' ? 'ok' : state === 'err' ? 'err' : 'running'}`}>
-                {state === 'running' ? '运行中…' : state === 'ok' ? '✓ 完成' : '✗ 失败'}
+                {state === 'running' ? t('chat.running') : state === 'ok' ? t('chat.ok') : t('chat.fail')}
               </span>
             </div>
             {tool.args && <div className="tool-args">{tool.args}</div>}
@@ -259,9 +261,9 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
 
   // 动态欢迎页：建议问题轮播（空状态时每 6s 切换一组）
   const SUGGEST_GROUPS = [
-    ['现在几点？', '计算 (123*456+789)/3', '北京现在天气如何？'],
-    ['解释什么是 MCP 协议，并各举一个例子', '用 Python 画一个简单的饼图', '把这段 JSON 转成表格'],
-    ['写一份本周工作周报的提纲', '把这句翻译成英文：今天天气不错', '帮我总结一下这篇文章的要点'],
+    [t('chat.suggest1a'), t('chat.suggest1b'), t('chat.suggest1c')],
+    [t('chat.suggest2a'), t('chat.suggest2b'), t('chat.suggest2c')],
+    [t('chat.suggest3a'), t('chat.suggest3b'), t('chat.suggest3c')],
   ];
   const [suggestIdx, setSuggestIdx] = useState(0);
   useEffect(() => {
@@ -275,18 +277,26 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
   return (
     <div className="chat-main">
       <div className="chat-toolbar">
-        <button className="icon-btn desktop-only-nav-btn" onClick={onOpenConversations} title="会话列表">
+        <button className="icon-btn desktop-only-nav-btn" onClick={onOpenConversations} title={t('chat.conversations')}>
           ☰
         </button>
-        <div className="title">{conversation.title || '新对话'}</div>
+        <div className="title">{conversation.title || t('common.noTitle')}</div>
         <span className="model-tag" title={`${providerName} · ${modelLabel}`}>
           {modelLabel || providerName}
         </span>
-        <button className="icon-btn desktop-only-nav-btn" onClick={onOpenSettings} title="配置">
+        <button className="icon-btn desktop-only-nav-btn" onClick={onOpenSettings} title={t('common.settings')}>
           ⚙
         </button>
+        <button
+          className="icon-btn lang-btn"
+          onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+          title={t('common.langTitle')}
+          style={{ fontWeight: 600, fontSize: 12, minWidth: 30 }}
+        >
+          🌐 {t('common.langBtn')}
+        </button>
         {streaming ? (
-          <button className="icon-btn" onClick={handleStop} title="停止生成" style={{ color: '#d93025' }}>
+          <button className="icon-btn" onClick={handleStop} title={t('chat.stop')} style={{ color: '#d93025' }}>
             ■
           </button>
         ) : null}
@@ -296,10 +306,7 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
           <div className="empty-welcome">
             <div className="w-icon">💬</div>
             <div className="w-title">ChatUI LLM Workbench</div>
-            <div className="w-sub">
-              支持统一配置任意 LLM Provider（OpenAI 兼容 / Claude / Gemini / Ollama），
-              并通过 MCP 与 Skill 调用工具。在「设置中心」完成配置后即可开始对话。
-            </div>
+            <div className="w-sub">{t('chat.welcomeSub')}</div>
             <div className="w-suggest" key={suggestIdx}>
               {suggestGroup.map((q) => (
                 <button key={q} onClick={() => handleSend('text', q)}>
@@ -316,7 +323,7 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
         )}
         <div className="chatui-shell">
           <Chat
-            placeholder="输入消息，Enter 发送，Shift+Enter 换行…"
+            placeholder={t('chat.placeholder')}
             messages={messages}
             renderMessageContent={renderMessageContent}
             onSend={handleSend}
