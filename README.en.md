@@ -1,52 +1,75 @@
+<p align="center">
+<a href="https://github.com/liusunf/snow_chat_ui" target="_blank">
+ <img src="client/public/icons/icon-192.png" height="80" alt="ChatUI LLM Workbench"/>
+</a>
+</p>
+<div align="center">
+[![GitHub stars](https://img.shields.io/github/stars/liusunf/snow_chat_ui?logo=github&style=flat-square)](https://github.com/liusunf/snow_chat_ui)
+[![GitHub forks](https://img.shields.io/github/forks/liusunf/snow_chat_ui?logo=github&style=flat-square)](https://github.com/liusunf/snow_chat_ui)
+[![GitHub license](https://img.shields.io/github/license/liusunf/snow_chat_ui?style=flat-square)](https://github.com/liusunf/snow_chat_ui)
+[![React](https://img.shields.io/badge/React-18.3-blue?logo=react&style=flat-square)]()
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&style=flat-square)]()
+[![Vite](https://img.shields.io/badge/Vite-5-purple?logo=vite&style=flat-square)]()
+[![Express](https://img.shields.io/badge/Express-4-green?logo=express&style=flat-square)]()
+[![ChatUI](https://img.shields.io/badge/ChatUI-core%203.8-orange?style=flat-square)]()
+[![MCP](https://img.shields.io/badge/MCP-Protocol-181717?style=flat-square)]()
+[![PWA](https://img.shields.io/badge/PWA-Offline%20Ready-9cf?style=flat-square)]()
+</div>
+
 # ChatUI LLM Workbench
 
-[**中文**](README.md) · English
+[**中文**](README.md) · English　|　Full Chinese version at [README.md](README.md)
 
-> Full Chinese version at [README.md](README.md)
+## Introduction
 
-A universal LLM chat window built on **ChatUI ([@chatui/core](https://chatui.io))**:
-**unified LLM Provider config + MCP tools + Skill system**, fully responsive (PC / tablet / mobile) + installable PWA.
+ChatUI LLM Workbench is a universal LLM chat window built on **ChatUI ([@chatui/core](https://chatui.io))**. Key strengths: **unified LLM Provider config, MCP tools and Skill system out of the box**, friendly LobeChat / Dify-style UI, decoupled frontend/backend and easy deployment. Works across all web devices (PC / tablet / phone) + installable PWA.
 
 > Want to plug this UI into your own backend? See the **[Backend API docs](./docs/API.md)** (online at `http://<host>/api-docs.html`) — implement the endpoints as documented and all AI interactions work.
 
-## Features
+### Demo & Links
 
-| Capability | Description |
-|---|---|
+* Local run: `npm start`, then open `http://localhost:8787`
+* Online API docs: `http://<host>/api-docs.html` (reachable via the Settings top bar "📖 API Docs" button)
+* Backend API contract (Markdown): [docs/API.md](./docs/API.md)
+* Source repo: https://github.com/liusunf/snow_chat_ui
+
+### Feature Modules
+
+#### Chat & Models
+
+| Module | Description |
+|  ----  | ----  |
 | 💬 ChatUI interface | Alibaba ChatUI conversation UI: bubbles, typing indicator, Markdown rendering, streaming cursor, dynamic welcome page (rotating suggestions) |
-| 🔌 Unified LLM Provider config | Independent Settings hub manages OpenAI-compatible / Anthropic Claude / Google Gemini / Ollama; custom BaseURL (DeepSeek, Moonshot, Qwen, vLLM…), streaming, connectivity test, fetch models |
-| 🧩 MCP support | Based on official `@modelcontextprotocol/sdk`; stdio / SSE / HTTP(Streamable) transports, auto tool discovery, one-click test, refresh/reconnect, expose as Skill |
-| 🎯 Skill system | Built-in skills (time / calculator / weather / fetch URL) + MCP tools bound as skills; triggered via function calling, tool execution shown live as cards |
-| 🗂 Provider presets | 11 one-click templates (OpenAI / DeepSeek / Moonshot / Zhipu / Qwen / Groq / OpenRouter / Claude / Gemini / Ollama / local vLLM) with an official-brand-icon picker (`@lobehub/icons`) |
-| 🧭 LobeChat-style ModelSelect | Focus opens a model dropdown panel: brand icon + current-item highlight + filter input, replacing the native select |
+| 🔌 Unified LLM Provider config | Independent Settings hub manages OpenAI-compatible / Anthropic Claude / Google Gemini / Ollama; custom BaseURL (DeepSeek, Moonshot, Qwen, vLLM…) |
+| 🗂 Provider presets | 11 one-click templates (OpenAI / DeepSeek / Moonshot / Zhipu / Qwen / Groq / OpenRouter / Claude / Gemini / Ollama / local vLLM) with an official-brand-icon picker |
+| 🧭 LobeChat-style ModelSelect | Focus opens a model dropdown panel: brand icon + current-item highlight + filter input |
 | 📡 Auto fetch models + whitelist | "Fetch models" pulls available models (OpenAI-compatible `/models`, Gemini `/models`, Ollama `/api/tags`); checkboxes build the whitelist |
-| 🏠 Standalone Settings hub | LobeChat/Dify-like layout: left-nav domains (Models / Tools / Skills / Advanced) + top bar back/export/import/save; chat area full-screen |
+| 🌊 Streaming output | SSE per-token real-time output, abortable anytime via the "■" stop button |
+
+#### Tools & Skills
+
+| Module | Description |
+|  ----  | ----  |
+| 🧩 MCP support | Based on official `@modelcontextprotocol/sdk`; stdio / SSE / HTTP(Streamable) transports, auto tool discovery, one-click test, refresh/reconnect |
+| 🎯 Skill system | Built-in skills (time / calculator / weather / fetch URL) + MCP tools bound as skills; triggered via function calling, execution shown live as tool cards (running → ✓/✗) |
+
+#### Deployment & Experience
+
+| Module | Description |
+|  ----  | ----  |
+| 🏠 Standalone Settings hub | LobeChat/Dify-like layout: left-nav domains (Models / Tools / Skills / Advanced), full-screen chat area |
 | 📤 Config export / import | One-click JSON export/import for migration and backup |
-| 📖 Backend API docs | Full backend contract (`docs/API.md` + online `/api-docs.html`), reachable from the Settings top bar "API Docs" button |
-| 🌐 Backend API URL config | Settings → Advanced → Backend service sets the backend URL (localStorage-persisted); frontend can be deployed standalone against any backend; blank = same-origin `/api/*` |
-| 🌏 Language switch | Top bar 🌐 toggles 简体中文 / English (chat page + Settings hub); preference persisted; every UI string updates instantly |
+| 🌐 Backend API URL config | Settings hub can set the backend API URL (localStorage-persisted); frontend deployable standalone against any backend; blank = same-origin `/api/*` |
+| 🌏 Language switch | Top bar 🌐 toggles 简体中文 / English; preference persisted; covers all UI strings and the online API docs page |
 | 📱 All-device support | Desktop dual-pane (conversations + full-screen chat); mobile single-pane with bottom nav, `100dvh` + safe-area insets |
 | 📦 PWA | `manifest.json` + Service Worker offline shell + icons; "Add to home screen" |
 | 🔗 Social sharing | Open Graph / Twitter Card tags + 1200×630 share image |
 
-## Architecture
+### Showcase
 
-```
-┌─────────────────────────────┐      ┌──────────────────────────────────────┐
-│  client (Vite + React + TS) │      │  server (Express + TS)                │
-│  ┌─────────┐ ┌───────────┐  │ /api │  ┌──────────────┐  ┌───────────────┐  │
-│  │ Sidebar │ │ ChatView  │◄─┼──────┼─►│ routes/chat  │─►│ agent (tool loop)│ │
-│  │ sessions│ │ ChatUI+SSE│  │      │  │ (SSE stream) │  └──────┬────────┘  │
-│  └─────────┘ └─────┬─────┘  │      │  └──────────────┘         │            │
-│  ┌────────────────┐│        │      │  ┌──────────┐ ┌──────────┴────────┐   │
-│  │ SettingsPage   ││        │      │  │providers/│ │ skills/ + mcp/    │   │
-│  │ 4 domains      ││        │      │  │ unified  │ │ Skill registry/    │   │
-│  └────────────────┘│        │      │  └──────────┘ │ executor           │   │
-└─────────────────────┘        │      │  MCP SDK ◄──── npx MCP Server        │
-                                │      └──────────────────────────────────────┘
-```
-
-**Agent tool loop** (`server/src/agent/agent.ts`): assemble tools → call LLM → parse `tool_calls` → execute Skill / MCP → feed results back → repeat until no tool calls (max `maxToolRounds` rounds).
+<p align="center">
+ <img src="client/public/icons/og-cover.png" alt="ChatUI LLM Workbench share image" width="640"/>
+</p>
 
 ## Quick Start
 
@@ -103,31 +126,14 @@ When enabled and "Expose as Skill" is checked, all tools of that server are inje
 
 Built-in skills (`server/src/skills/registry.ts`): `get_current_time`, `calculator` (whitelisted safe math), `get_weather` (free open-meteo API), `fetch_url` (web page text extraction).
 
-Skill descriptions are auto-appended to the System Prompt; the LLM triggers them via function calling and the frontend shows execution live as tool cards (running → ✓/✗).
+Skill descriptions are auto-appended to the System Prompt; the LLM triggers them via function calling and the frontend shows execution live as tool cards.
 
 ## Backend API Docs
 
 The full backend contract is documented — **implement the endpoints and you can drive the entire UI** (LLM Provider / MCP / Skill config + SSE streaming chat):
 
-- **Online**: `http://<host>/api-docs.html` (reachable via the Settings top bar "📖 API Docs" button; **🌐 in-page language switch**, shares the UI language preference)
+- **Online**: `http://<host>/api-docs.html` (**🌐 in-page language switch**, shares the UI language preference)
 - **Source**: `docs/API.md`
-
-## Language Switch
-
-The UI supports **简体中文 / English** with one click (lightweight i18n, zero third-party deps, `client/src/i18n.tsx`):
-
-- Entry points: 🌐 button in the chat top bar and in the Settings top bar
-- Preference persisted in browser localStorage (key `chatui_lang`); defaults to the browser language, Chinese if undetected
-- Coverage: all chat page & Settings hub strings (provider preset hints, built-in skill names, dynamic welcome suggestions…), plus the online API docs page `/api-docs.html` (independent bilingual implementation reading the same preference)
-- Adding strings: add one key to both the `zh` and `en` dictionaries in `i18n.tsx`
-
-## Backend API URL Config
-
-The frontend requests same-origin `/api/*` by default (backend hosts `client/dist` or proxies `/api`). To **deploy the frontend standalone** (Nginx / CDN / static hosting), enter the backend URL (e.g. `http://192.168.1.10:8787`) in Settings → Advanced → Backend service:
-
-- Stored in localStorage (key `chatui_api_base`); takes effect immediately, no rebuild needed
-- Leave blank to restore same-origin relative paths
-- For cross-origin deployments the backend must enable CORS (this project's Express server already includes the `cors()` middleware)
 
 ## API Overview
 
@@ -140,13 +146,6 @@ The frontend requests same-origin `/api/*` by default (backend hosts `client/dis
 | POST | `/api/mcp/test` · `/api/mcp/refresh` · GET `/api/mcp/tools` | MCP test / reconnect / tool list |
 | GET | `/api/skills` | Active skills (builtin + MCP) |
 | POST | `/api/chat` | SSE streaming chat (`delta` / `tool_start` / `tool_result` / `info` / `done` / `error` events) |
-
-## All-Device & PWA
-
-- **Breakpoints**: >1180px dual-pane (conversations + full-screen chat); <900px single-pane with bottom nav (conversations / chat / settings views)
-- **Mobile**: `viewport-fit=cover` + `env(safe-area-inset-bottom)`, `user-scalable=no` prevents zoom
-- **PWA**: `/manifest.json` (standalone + icons), `/sw.js` (precached shell + stale-while-revalidate static assets + network-first API)
-- **OG**: `og:*` and `twitter:card` tags + `/icons/og-cover.png` (1200×630)
 
 ## Directory Structure
 

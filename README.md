@@ -1,50 +1,75 @@
+<p align="center">
+<a href="https://github.com/liusunf/snow_chat_ui" target="_blank">
+ <img src="client/public/icons/icon-192.png" height="80" alt="ChatUI LLM Workbench"/>
+</a>
+</p>
+<div align="center">
+[![GitHub stars](https://img.shields.io/github/stars/liusunf/snow_chat_ui?logo=github&style=flat-square)](https://github.com/liusunf/snow_chat_ui)
+[![GitHub forks](https://img.shields.io/github/forks/liusunf/snow_chat_ui?logo=github&style=flat-square)](https://github.com/liusunf/snow_chat_ui)
+[![GitHub license](https://img.shields.io/github/license/liusunf/snow_chat_ui?style=flat-square)](https://github.com/liusunf/snow_chat_ui)
+[![React](https://img.shields.io/badge/React-18.3-blue?logo=react&style=flat-square)]()
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&style=flat-square)]()
+[![Vite](https://img.shields.io/badge/Vite-5-purple?logo=vite&style=flat-square)]()
+[![Express](https://img.shields.io/badge/Express-4-green?logo=express&style=flat-square)]()
+[![ChatUI](https://img.shields.io/badge/ChatUI-core%203.8-orange?style=flat-square)]()
+[![MCP](https://img.shields.io/badge/MCP-Protocol-181717?style=flat-square)]()
+[![PWA](https://img.shields.io/badge/PWA-Offline%20Ready-9cf?style=flat-square)]()
+</div>
+
 # ChatUI LLM Workbench
 
 **[English](README.en.md)** · 中文　|　完整英文版见 [README.en.md](README.en.md)
 
-基于 **ChatUI（[@chatui/core](https://chatui.io)）** 的通用大模型对话聊天窗口：
-**统一 LLM Provider 配置 + MCP 工具 + Skill 技能系统**，全端响应式（PC / 平板 / 移动端）+ PWA 可安装。
+## 项目介绍
+
+ChatUI LLM Workbench 是一款基于 **ChatUI（[@chatui/core](https://chatui.io)）** 的通用大模型对话聊天窗口。主要优点是：**统一 LLM Provider 配置、MCP 工具与 Skill 技能系统开箱即用**，界面设计友好（LobeChat / Dify 风格），前后端分离、部署简单。支持 Web 端全设备（PC / 平板 / 手机）+ PWA 可安装。
 
 > 需要把本 UI 接入自己的后端？见 **[接口对接文档](./docs/API.md)**（在线版 `http://<host>/api-docs.html`）——按文档实现后端接口即可驱动全部 AI 交互。
 
-## 功能特性
+### 演示与访问地址
 
-| 能力 | 说明 |
-|---|---|
+* 本地运行：`npm start` 后访问 `http://localhost:8787`
+* 在线接口对接文档：`http://<host>/api-docs.html`（设置中心顶栏「📖 接口文档」直达）
+* 后端接口契约（Markdown 版）：[docs/API.md](./docs/API.md)
+* 源码仓库：https://github.com/liusunf/snow_chat_ui
+
+### 功能模块
+
+#### 对话与模型
+
+|  模块   | 介绍  |
+|  ----  | ----  |
 | 💬 ChatUI 对话界面 | 阿里 ChatUI 对话式交互：气泡、打字指示、Markdown 渲染、流式输出光标、动态欢迎页（建议问题轮播） |
-| 🔌 LLM Provider 统一配置 | 独立「设置中心」统一管理 OpenAI 兼容 / Anthropic Claude / Google Gemini / Ollama，支持自定义 BaseURL（DeepSeek、Moonshot、通义、vLLM 等）、流式输出、连通性测试、拉取模型 |
-| 🧩 MCP 支持 | 基于官方 `@modelcontextprotocol/sdk`，支持 stdio / SSE / HTTP(Streamable) 三种传输，工具自动发现、一键测试、刷新重连、暴露为技能 |
-| 🎯 Skill 技能系统 | 内置技能（时间 / 计算器 / 天气 / 网页抓取）+ MCP 工具绑定为技能；通过 function calling 自动触发，工具调用过程以卡片实时展示 |
-| 🗂 供应商预设模板 | 11 家一键模板（OpenAI / DeepSeek / Moonshot / 智谱 / 通义 / Groq / OpenRouter / Claude / Gemini / Ollama / 本地 vLLM），带官方品牌图标选择弹层（`@lobehub/icons`） |
-| 🧭 LobeChat 风格 ModelSelect | 聚焦即弹出模型下拉面板：品牌图标 + 当前项高亮 + 输入过滤，替代原生下拉 |
+| 🔌 LLM Provider 统一配置 | 独立「设置中心」统一管理 OpenAI 兼容 / Anthropic Claude / Google Gemini / Ollama，支持自定义 BaseURL（DeepSeek、Moonshot、通义、vLLM 等） |
+| 🗂 供应商预设模板 | 11 家一键模板（OpenAI / DeepSeek / Moonshot / 智谱 / 通义 / Groq / OpenRouter / Claude / Gemini / Ollama / 本地 vLLM），官方品牌图标选择弹层 |
+| 🧭 LobeChat 风格 ModelSelect | 聚焦即弹出模型下拉面板：品牌图标 + 当前项高亮 + 输入过滤 |
 | 📡 模型自动拉取 + 白名单 | 「拉模型」自动获取可用模型（OpenAI 兼容 `/models`、Gemini `/models`、Ollama `/api/tags`），勾选生成模型白名单 |
-| 🏠 独立设置中心 | 对齐 LobeChat/Dify 形态：左导航分域（模型服务 / 工具连接 / 技能 / 高级与数据）+ 顶栏返回/导出/导入/保存；对话区全屏化 |
-| 📤 配置导出 / 导入 | 一键导出/导入配置 JSON，便于多端迁移与备份 |
-| 📖 接口对接文档 | 完整的后端接口契约文档（`docs/API.md` + 在线 `/api-docs.html`），设置中心顶栏「接口文档」按钮直达 |
-| 🌐 后端服务地址配置 | 设置中心「高级与数据」可配置后端 API 地址（localStorage 持久化），前端可独立部署、指向任意后端；留空则同源 `/api/*` |
-| 🌏 中英文切换 | 顶栏 🌐 一键切换 简体中文 / English（对话页 + 设置中心均可），偏好持久化，全部界面文案即时双语 |
+| 🌊 流式输出 | SSE 逐 token 实时输出，可随时「■」停止中断 |
+
+#### 工具与技能
+
+|  模块   | 介绍  |
+|  ----  | ----  |
+| 🧩 MCP 支持 | 基于官方 `@modelcontextprotocol/sdk`，支持 stdio / SSE / HTTP(Streamable) 三种传输，工具自动发现、一键测试、刷新重连 |
+| 🎯 Skill 技能系统 | 内置技能（时间 / 计算器 / 天气 / 网页抓取）+ MCP 工具绑定为技能；function calling 自动触发，工具执行过程以卡片实时展示（运行中 → ✓/✗） |
+
+#### 部署与体验
+
+|  模块   | 介绍  |
+|  ----  | ----  |
+| 🏠 独立设置中心 | 对齐 LobeChat/Dify 形态：左导航分域（模型服务 / 工具连接 / 技能 / 高级与数据），对话区全屏化 |
+| 📤 配置导出 / 导入 | 一键导出 / 导入配置 JSON，便于多端迁移与备份 |
+| 🌐 后端服务地址配置 | 设置中心可配置后端 API 地址（localStorage 持久化），前端可独立部署、指向任意后端；留空则同源 `/api/*` |
+| 🌏 中英文切换 | 顶栏 🌐 一键切换 简体中文 / English，偏好持久化，覆盖全部界面文案与在线接口文档页 |
 | 📱 全端支持 | 桌面「会话 + 全屏聊天」双栏；移动端单栏 + 底部导航，`100dvh` + 安全区适配 |
-| 📦 PWA | `manifest.json` + Service Worker 离线壳 + 图标，可"添加到主屏幕" |
+| 📦 PWA | `manifest.json` + Service Worker 离线壳 + 图标，可「添加到主屏幕」 |
 | 🔗 社交分享 | Open Graph / Twitter Card 标签 + 1200×630 分享图 |
 
-## 架构
+### 系统展示
 
-```
-┌─────────────────────────────┐      ┌──────────────────────────────────────┐
-│  client (Vite + React + TS) │      │  server (Express + TS)                │
-│  ┌─────────┐ ┌───────────┐  │ /api │  ┌──────────────┐  ┌───────────────┐  │
-│  │ Sidebar │ │ ChatView  │◄─┼──────┼─►│ routes/chat  │─►│ agent (工具循环) │  │
-│  │ 会话列表 │ │ ChatUI+SSE│  │      │  │ (SSE 流式)   │  └──────┬────────┘  │
-│  └─────────┘ └─────┬─────┘  │      │  └──────────────┘         │            │
-│  ┌────────────────┐│        │      │  ┌──────────┐ ┌──────────┴────────┐   │
-│  │ SettingsPage   ││        │      │  │providers/│ │ skills/ + mcp/    │   │
-│  │ 设置中心(四域)  ││        │      │  │统一抽象   │ │ Skill 注册表/执行器│   │
-│  └────────────────┘│        │      │  └──────────┘ └───────────────────┘   │
-└─────────────────────┘        │      │  MCP SDK ◄──── npx MCP Server        │
-                                │      └──────────────────────────────────────┘
-```
-
-**Agent 工具循环**（`server/src/agent/agent.ts`）：组装工具 → 调 LLM → 解析 `tool_calls` → 执行 Skill / MCP → 结果回填上下文 → 继续，直到无工具调用（最多 `maxToolRounds` 轮）。
+<p align="center">
+ <img src="client/public/icons/og-cover.png" alt="ChatUI LLM Workbench 分享图" width="640"/>
+</p>
 
 ## 快速开始
 
@@ -101,31 +126,14 @@ npm start
 
 内置技能（`server/src/skills/registry.ts`）：`get_current_time`、`calculator`（白名单安全计算）、`get_weather`（open-meteo 免费 API）、`fetch_url`（网页正文抓取）。
 
-技能描述自动注入 System Prompt，LLM 通过 function calling 按需触发，前端以工具卡片实时展示执行过程（运行中 → ✓/✗）。
+技能描述自动注入 System Prompt，LLM 通过 function calling 按需触发，前端以工具卡片实时展示执行过程。
 
 ## 接口对接文档
 
 后端接口契约已整理成完整文档，**按文档实现后端即可驱动整套 UI**（含 LLM Provider / MCP / Skill 配置与 SSE 流式对话）：
 
-- 在线版：`http://<host>/api-docs.html`（设置中心顶栏「📖 接口文档」直达，**页面内 🌐 支持中英文切换**，与 UI 语言偏好联动）
+- **在线版**：`http://<host>/api-docs.html`（**页面内 🌐 支持中英文切换**，与 UI 语言偏好联动）
 - **源码版**：`docs/API.md`
-
-## 中英文切换
-
-界面支持 **简体中文 / English** 一键切换（轻量 i18n，无第三方依赖，`client/src/i18n.tsx`）：
-
-- 入口：对话页顶栏 🌐 按钮、设置中心顶栏 🌐 按钮
-- 偏好保存在浏览器 localStorage（键 `chatui_lang`），默认跟随浏览器语言，未检测到则中文
-- 覆盖范围：对话页、设置中心全部文案（含供应商模板提示、内置技能名称、动态欢迎页建议问题等），以及在线接口对接文档页 `/api-docs.html`（独立双语实现，读取同一语言偏好）
-- 新增文案：在 `i18n.tsx` 的 `zh` / `en` 字典中各加一条 key 即可
-
-## 后端服务地址配置
-
-前端默认请求同源 `/api/*`（后端托管 `client/dist` 或反向代理 `/api`）。若需**独立部署前端**（Nginx / CDN / 静态托管），在设置中心「高级与数据 → 后端服务」填写后端完整地址（如 `http://192.168.1.10:8787`）：
-
-- 配置保存在浏览器 localStorage（键 `chatui_api_base`），修改即时生效，无需重新构建
-- 留空则恢复同源相对路径模式
-- 跨域部署时后端需开启 CORS（本项目 Express 服务端已内置 `cors()` 中间件）
 
 ## API 一览
 
@@ -138,13 +146,6 @@ npm start
 | POST | `/api/mcp/test` · `/api/mcp/refresh` · GET `/api/mcp/tools` | MCP 测试 / 重连 / 工具列表 |
 | GET | `/api/skills` | 当前生效技能（builtin + MCP） |
 | POST | `/api/chat` | SSE 流式对话（`delta` / `tool_start` / `tool_result` / `info` / `done` / `error` 事件） |
-
-## 全端与 PWA
-
-- **响应式断点**：>1180px 双栏（会话 + 全屏聊天）；<900px 单栏 + 底部导航（会话 / 聊天 / 配置视图切换）
-- **移动端**：`viewport-fit=cover` + `env(safe-area-inset-bottom)`，`user-scalable=no` 防误缩放
-- **PWA**：`/manifest.json`（standalone + 图标）、`/sw.js`（预缓存壳 + 静态资源 stale-while-revalidate + API 网络优先）
-- **OG**：`og:*` 与 `twitter:card` 标签 + `/icons/og-cover.png`（1200×630）
 
 ## 目录结构
 
