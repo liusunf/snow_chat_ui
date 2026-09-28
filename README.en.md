@@ -28,6 +28,7 @@ snow_chat_ui is a universal LLM chat window built on **ChatUI ([@chatui/core](ht
 
 ### Demo & Links
 
+* Official website: https://www.qxth.online/
 * Local run: `npm start`, then open `http://localhost:8787`
 * Online API docs: `http://<host>/api-docs.html` (reachable via the Settings top bar "📖 API Docs" button)
 * Backend API contract (Markdown): [docs/API.md](./docs/API.md)

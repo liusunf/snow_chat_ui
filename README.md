@@ -28,6 +28,7 @@ snow_chat_ui 是一款基于 **ChatUI（[@chatui/core](https://chatui.io)）** �
 
 ### 演示与访问地址
 
+* 官方网站：https://www.qxth.online/
 * 本地运行：`npm start` 后访问 `http://localhost:8787`
 * 在线接口对接文档：`http://<host>/api-docs.html`（设置中心顶栏「📖 接口文档」直达）
 * 后端接口契约（Markdown 版）：[docs/API.md](./docs/API.md)
