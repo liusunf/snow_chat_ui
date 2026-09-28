@@ -360,9 +360,6 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
           >
             🌐 {t('common.langBtn')}
           </button>
-          <button className="btn btn-ghost btn-sm" onClick={() => window.open('/api-docs.html', '_blank', 'noopener')} title={t('settings.apiDocsTitle')}>
-            {t('settings.apiDocs')}
-          </button>
           <button className="btn btn-ghost btn-sm" onClick={exportConfig}>
             {t('settings.export')}
           </button>
@@ -758,53 +755,97 @@ export function SettingsPage({ config, onSave, onBack }: Props) {
           )}
 
           {tab === 'advanced' && (
-            <section className="config-section">
-              <h3>{t('settings.systemPrompt')}</h3>
-              <div className="field">
-                <textarea rows={5} value={draft.systemPrompt ?? ''} onChange={(e) => patch({ systemPrompt: e.target.value })} />
-                <div className="hint">{t('settings.systemPromptHint')}</div>
-              </div>
-              <h3 style={{ marginTop: 18 }}>{t('settings.toolLoop')}</h3>
-              <div className="field">
-                <label>{t('settings.maxToolRounds')}</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={draft.maxToolRounds ?? 8}
-                  onChange={(e) => patch({ maxToolRounds: Number(e.target.value) })}
-                />
-              </div>
-              <h3 style={{ marginTop: 18 }}>{t('settings.backendService')}</h3>
-              <div className="field">
-                <label>{t('settings.backendApi')}</label>
-                <input
-                  type="text"
-                  value={apiBase}
-                  onChange={(e) => handleApiBaseChange(e.target.value)}
-                  placeholder={t('settings.backendPlaceholder')}
-                  spellCheck={false}
-                />
-                <div className="hint">
-                  {t('settings.backendHint')}
+            <>
+              <div className="adv-card">
+                <div className="adv-card-head">
+                  <span className="adv-card-icon">🧠</span>
+                  <div>
+                    <div className="adv-card-title">{t('settings.systemPrompt')}</div>
+                    <div className="adv-card-sub">{t('settings.systemPromptSub')}</div>
+                  </div>
+                </div>
+                <div className="adv-card-body">
+                  <div className="field">
+                    <textarea rows={5} value={draft.systemPrompt ?? ''} onChange={(e) => patch({ systemPrompt: e.target.value })} />
+                  </div>
+                  <div className="hint">{t('settings.systemPromptHint')}</div>
                 </div>
               </div>
-              <h3 style={{ marginTop: 18 }}>{t('settings.dataMgmt')}</h3>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                <button className="btn btn-ghost" onClick={exportConfig}>
-                  {t('settings.exportJson')}
-                </button>
-                <button className="btn btn-ghost" onClick={() => importRef.current?.click()}>
-                  {t('settings.importJson')}
-                </button>
-                <button className="btn btn-ghost" onClick={() => window.open('/api-docs.html', '_blank', 'noopener')}>
-                  {t('settings.docsBtn')}
-                </button>
+
+              <div className="adv-card">
+                <div className="adv-card-head">
+                  <span className="adv-card-icon">🔄</span>
+                  <div>
+                    <div className="adv-card-title">{t('settings.toolLoop')}</div>
+                    <div className="adv-card-sub">{t('settings.toolLoopSub')}</div>
+                  </div>
+                </div>
+                <div className="adv-card-body">
+                  <div className="field">
+                    <label>{t('settings.maxToolRounds')}</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={20}
+                      value={draft.maxToolRounds ?? 8}
+                      onChange={(e) => patch({ maxToolRounds: Number(e.target.value) })}
+                    />
+                  </div>
+                  <div className="hint">{t('settings.toolLoopHint')}</div>
+                </div>
               </div>
-              <div className="hint" style={{ marginTop: 6 }}>
-                {t('settings.dataHint')}
+
+              <div className="adv-card">
+                <div className="adv-card-head">
+                  <span className="adv-card-icon">🌐</span>
+                  <div>
+                    <div className="adv-card-title">{t('settings.backendService')}</div>
+                    <div className="adv-card-sub">{t('settings.backendSub')}</div>
+                  </div>
+                </div>
+                <div className="adv-card-body">
+                  <div className="field">
+                    <label>{t('settings.backendApi')}</label>
+                    <input
+                      type="text"
+                      value={apiBase}
+                      onChange={(e) => handleApiBaseChange(e.target.value)}
+                      placeholder={t('settings.backendPlaceholder')}
+                      spellCheck={false}
+                    />
+                  </div>
+                  <div className="hint">
+                    {t('settings.backendHint')}
+                  </div>
+                </div>
               </div>
-            </section>
+
+              <div className="adv-card">
+                <div className="adv-card-head">
+                  <span className="adv-card-icon">📦</span>
+                  <div>
+                    <div className="adv-card-title">{t('settings.dataMgmt')}</div>
+                    <div className="adv-card-sub">{t('settings.dataSub')}</div>
+                  </div>
+                </div>
+                <div className="adv-card-body">
+                  <div className="adv-card-actions">
+                    <button className="btn btn-ghost" onClick={exportConfig}>
+                      {t('settings.exportJson')}
+                    </button>
+                    <button className="btn btn-ghost" onClick={() => importRef.current?.click()}>
+                      {t('settings.importJson')}
+                    </button>
+                    <button className="btn btn-ghost" onClick={() => window.open('/api-docs.html', '_blank', 'noopener')}>
+                      {t('settings.docsBtn')}
+                    </button>
+                  </div>
+                  <div className="hint">
+                    {t('settings.dataHint')}
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
