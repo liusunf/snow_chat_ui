@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>后端接口对接文档 · ChatUI LLM Workbench</title>
+<title data-zh="后端接口对接文档 · ChatUI LLM Workbench" data-en="Backend API Docs · ChatUI LLM Workbench">后端接口对接文档 · ChatUI LLM Workbench</title>
 <style>
   :root {
     --brand: #1a73e8;
@@ -22,8 +22,11 @@
   .layout { display: flex; min-height: 100vh; }
   /* 侧边导航 */
   .sidebar { width: 250px; flex-shrink: 0; background: #fff; border-right: 1px solid var(--border); padding: 20px 14px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-  .sidebar .logo { font-weight: 700; font-size: 15px; padding: 0 8px 14px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+  .sidebar .logo { display: flex; align-items: center; justify-content: space-between; font-weight: 700; font-size: 15px; padding: 0 8px 14px; border-bottom: 1px solid var(--border); margin-bottom: 12px; gap: 8px; }
   .sidebar .logo small { display: block; color: var(--text-2); font-weight: 400; font-size: 11px; margin-top: 2px; }
+  .sidebar .logo .lg-title { min-width: 0; }
+  .sidebar #langBtn { flex-shrink: 0; border: 1px solid var(--border); background: var(--bg); color: var(--text-2); border-radius: 8px; padding: 2px 9px; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .sidebar #langBtn:hover { background: #eef3fc; color: var(--brand); border-color: var(--brand); }
   .sidebar a { display: block; padding: 6px 8px; border-radius: 8px; color: var(--text-2); text-decoration: none; font-size: 13px; }
   .sidebar a:hover { background: #eef3fc; color: var(--brand); }
   .sidebar .sec { color: #9aa0a6; font-size: 11px; padding: 10px 8px 4px; }
@@ -63,11 +66,14 @@
 <body>
 <div class="layout">
   <nav class="sidebar">
-    <div class="logo">后端接口对接文档<small>ChatUI LLM Workbench · v1.0</small></div>
-    <div class="sec">总览</div>
-    <a href="#overview">1. 总体架构</a>
-    <a href="#static">2. 静态托管约定</a>
-    <div class="sec">接口明细</div>
+    <div class="logo">
+      <span class="lg-title"><span data-zh="后端接口对接文档" data-en="Backend API Docs">后端接口对接文档</span><small>ChatUI LLM Workbench · v1.0</small></span>
+      <button id="langBtn" type="button" title="Switch to English">EN</button>
+    </div>
+    <div class="sec" data-zh="总览" data-en="Overview">总览</div>
+    <a href="#overview"><span data-zh="1. 总体架构" data-en="1. Overview">1. 总体架构</span></a>
+    <a href="#static"><span data-zh="2. 静态托管约定" data-en="2. Static Hosting">2. 静态托管约定</span></a>
+    <div class="sec" data-zh="接口明细" data-en="API Reference">接口明细</div>
     <a href="#api-config-get">GET /api/config</a>
     <a href="#api-config-put">PUT /api/config</a>
     <a href="#api-config-models">POST /api/config/models</a>
@@ -78,41 +84,41 @@
     <a href="#api-skills">GET /api/skills</a>
     <a href="#api-health">GET /api/health</a>
     <a href="#api-chat">POST /api/chat (SSE)</a>
-    <div class="sec">后端语义</div>
-    <a href="#provider-abstraction">4.1 Provider 适配层</a>
-    <a href="#tool-injection">4.2 工具定义注入</a>
-    <a href="#agent-loop">4.3 Agent 工具循环</a>
-    <a href="#call-map">5. 前端调用自查表</a>
-    <a href="#default-config">6. 默认配置参考</a>
-    <a href="#verify">7. 快速验证清单</a>
+    <div class="sec" data-zh="后端语义" data-en="Backend Semantics">后端语义</div>
+    <a href="#provider-abstraction"><span data-zh="4.1 Provider 适配层" data-en="4.1 Provider Adapter">4.1 Provider 适配层</span></a>
+    <a href="#tool-injection"><span data-zh="4.2 工具定义注入" data-en="4.2 Tool Definition Injection">4.2 工具定义注入</span></a>
+    <a href="#agent-loop"><span data-zh="4.3 Agent 工具循环" data-en="4.3 Agent Tool Loop">4.3 Agent 工具循环</span></a>
+    <a href="#call-map"><span data-zh="5. 前端调用自查表" data-en="5. Frontend Call Map">5. 前端调用自查表</span></a>
+    <a href="#default-config"><span data-zh="6. 默认配置参考" data-en="6. Default Config">6. 默认配置参考</span></a>
+    <a href="#verify"><span data-zh="7. 快速验证清单" data-en="7. Verification Checklist">7. 快速验证清单</span></a>
   </nav>
 
   <main class="main">
-    <h1>ChatUI LLM Workbench — 后端接口对接文档</h1>
-    <p class="sub">实现以下接口并托管前端静态产物，即可完整驱动这套 UI：LLM Provider 统一配置 / MCP / Skill / 流式对话 · 传输 JSON + SSE · 默认端口 8787（环境变量 PORT 可覆盖）</p>
+    <h1 data-zh="ChatUI LLM Workbench — 后端接口对接文档" data-en="ChatUI LLM Workbench — Backend API Integration Docs">ChatUI LLM Workbench — 后端接口对接文档</h1>
+    <p class="sub" data-zh="实现以下接口并托管前端静态产物，即可完整驱动这套 UI：LLM Provider 统一配置 / MCP / Skill / 流式对话 · 传输 JSON + SSE · 默认端口 8787（环境变量 PORT 可覆盖）" data-en="Implement the following endpoints and host the static frontend to fully drive this UI: unified LLM Provider config / MCP / Skill / streaming chat · JSON + SSE transport · default port 8787 (overridable via PORT env)">实现以下接口并托管前端静态产物，即可完整驱动这套 UI：LLM Provider 统一配置 / MCP / Skill / 流式对话 · 传输 JSON + SSE · 默认端口 8787（环境变量 PORT 可覆盖）</p>
 
-    <h2 class="anchor" id="overview">1. 总体架构</h2>
+    <h2 class="anchor" id="overview" data-zh="1. 总体架构" data-en="1. Overview">1. 总体架构</h2>
     <pre><code>┌─────────────────────────────┐        HTTP / SSE          ┌──────────────────────────────┐
 │  前端（静态产物，浏览器）     │  ───────────────────────►  │  你的后端服务                  │
 │  - 对话页 / 设置中心          │  GET/POST /api/*          │  - 配置持久化                  │
 │  - 会话列表 / 全端 PWA       │  ◄─────────────────────   │  - LLM Provider 适配层         │
 │                             │      JSON / SSE 流          │  - MCP 客户端 / 技能执行器      │
 └─────────────────────────────┘                            └──────────────────────────────┘</code></pre>
-    <div class="box ok">后端职责：① 提供 /api/* 全部接口；② 实现统一 LLM Provider 抽象（配置 → 厂商调用 → SSE 事件流）；③ 实现 Agent 工具循环（function calling）；④ 托管前端静态产物。</div>
+    <div class="box ok" data-zh="后端职责：① 提供 /api/* 全部接口；② 实现统一 LLM Provider 抽象（配置 → 厂商调用 → SSE 事件流）；③ 实现 Agent 工具循环（function calling）；④ 托管前端静态产物。" data-en="Backend responsibilities: ① provide all /api/* endpoints; ② implement unified LLM Provider abstraction (config → vendor calls → SSE event stream); ③ implement the Agent tool loop (function calling); ④ host the static frontend.">后端职责：① 提供 /api/* 全部接口；② 实现统一 LLM Provider 抽象（配置 → 厂商调用 → SSE 事件流）；③ 实现 Agent 工具循环（function calling）；④ 托管前端静态产物。</div>
 
-    <h2 class="anchor" id="static">2. 前端静态托管约定（全端支持的前提）</h2>
+    <h2 class="anchor" id="static" data-zh="2. 前端静态托管约定（全端支持的前提）" data-en="2. Static Hosting (prerequisite for all-device support)">2. 前端静态托管约定（全端支持的前提）</h2>
     <table>
-      <tr><th>路径</th><th>内容</th><th>说明</th></tr>
-      <tr><td><code>/</code></td><td><code>index.html</code></td><td>入口页，含 OG / Twitter Card / meta 标签（已内置）</td></tr>
-      <tr><td><code>/assets/*</code></td><td>JS/CSS 构建产物</td><td>Vite 生成，index.html 自动引用</td></tr>
-      <tr><td><code>/manifest.json</code></td><td>PWA 清单</td><td>名称 / 图标 / 主题色</td></tr>
-      <tr><td><code>/sw.js</code></td><td>Service Worker</td><td>PWA 离线缓存（可选）</td></tr>
-      <tr><td><code>/icons/*</code></td><td>icon-192/512、apple-touch-icon、og-cover</td><td>PWA 图标 + 分享卡片图（1200×630）</td></tr>
+      <tr><th data-zh="路径" data-en="Path">路径</th><th data-zh="内容" data-en="Content">内容</th><th data-zh="说明" data-en="Description">说明</th></tr>
+      <tr><td><code>/</code></td><td><code>index.html</code></td><td data-zh="入口页，含 OG / Twitter Card / meta 标签（已内置）" data-en="Entry page with OG / Twitter Card / meta tags (built-in)">入口页，含 OG / Twitter Card / meta 标签（已内置）</td></tr>
+      <tr><td><code>/assets/*</code></td><td data-zh="JS/CSS 构建产物" data-en="JS/CSS build output">JS/CSS 构建产物</td><td data-zh="Vite 生成，index.html 自动引用" data-en="Generated by Vite, auto-referenced by index.html">Vite 生成，index.html 自动引用</td></tr>
+      <tr><td><code>/manifest.json</code></td><td data-zh="PWA 清单" data-en="PWA manifest">PWA 清单</td><td data-zh="名称 / 图标 / 主题色" data-en="Name / icons / theme color">名称 / 图标 / 主题色</td></tr>
+      <tr><td><code>/sw.js</code></td><td>Service Worker</td><td data-zh="PWA 离线缓存（可选）" data-en="PWA offline cache (optional)">PWA 离线缓存（可选）</td></tr>
+      <tr><td><code>/icons/*</code></td><td data-zh="icon-192/512、apple-touch-icon、og-cover" data-en="icon-192/512, apple-touch-icon, og-cover">icon-192/512、apple-touch-icon、og-cover</td><td data-zh="PWA 图标 + 分享卡片图（1200×630）" data-en="PWA icons + share card image (1200×630)">PWA 图标 + 分享卡片图（1200×630）</td></tr>
     </table>
-    <p><b>SPA 回退</b>：非 <code>/api/</code> 开头的 GET 一律返回 <code>index.html</code>。前端未内置鉴权，可在网关层自行加；注意 <code>GET /api/config</code> 的 apiKey 必须掩码。</p>
+    <p><b data-zh="SPA 回退" data-en="SPA fallback">SPA 回退</b><span data-zh="：非 " data-en=": every GET not starting with ">：非 </span><code>/api/</code><span data-zh=" 开头的 GET 一律返回 " data-en=" returns "> 开头的 GET 一律返回 </span><code>index.html</code><span data-zh="。前端未内置鉴权，可在网关层自行加；注意 " data-en=". The frontend has no built-in auth; add it at the gateway layer. Note that ">。前端未内置鉴权，可在网关层自行加；注意 </span><code>GET /api/config</code><span data-zh=" 的 apiKey 必须掩码。" data-en=" apiKey must be masked."> 的 apiKey 必须掩码。</span></p>
 
-    <h2 class="anchor" id="api-config-get">3.1 <span class="badge b-get">GET</span> /api/config — 读取配置</h2>
-    <p>设置中心加载时调用，渲染全部 Provider / MCP / Skill 配置。响应为 <code>AppConfig</code>，apiKey 已掩码：</p>
+    <h2 class="anchor" id="api-config-get"><span class="badge b-get">GET</span> /api/config — <span data-zh="读取配置" data-en="Read config">读取配置</span></h2>
+    <p><span data-zh="设置中心加载时调用，渲染全部 Provider / MCP / Skill 配置。响应为 " data-en="Called when Settings loads; renders all Provider / MCP / Skill configs. Response is ">设置中心加载时调用，渲染全部 Provider / MCP / Skill 配置。响应为 </span><code>AppConfig</code><span data-zh="，apiKey 已掩码：" data-en=" with masked apiKey:">，apiKey 已掩码：</span></p>
     <pre><code>{
   <span class="en">"activeProviderId"</span>: "ollama-demo",
   <span class="en">"providers"</span>: [{ "id": "ollama-demo", "type": "ollama", "name": "Ollama 本地",
@@ -127,35 +133,35 @@
   <span class="en">"maxToolRounds"</span>: 8
 }</code></pre>
     <table>
-      <tr><th>类型</th><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr>
-      <tr><td rowspan="6">AppConfig</td><td>activeProviderId</td><td>string</td><td>✓</td><td>默认 Provider id（对话缺省时使用）</td></tr>
-      <tr><td>providers</td><td>ProviderConfig[]</td><td>✓</td><td>LLM Provider 列表</td></tr>
-      <tr><td>mcpServers</td><td>McpServerConfig[]</td><td>✓</td><td>MCP 服务器列表</td></tr>
-      <tr><td>skills</td><td>SkillConfig[]</td><td>✓</td><td>技能列表</td></tr>
-      <tr><td>systemPrompt</td><td>string</td><td></td><td>附加系统提示词（后端追加技能清单）</td></tr>
-      <tr><td>maxToolRounds</td><td>number</td><td>✓</td><td>最大工具循环轮数（1~20）</td></tr>
-      <tr><td rowspan="8">ProviderConfig</td><td>id</td><td>string</td><td>✓</td><td>唯一 id</td></tr>
-      <tr><td>type</td><td>'openai'|'anthropic'|'gemini'|'ollama'</td><td>✓</td><td>Provider 类型</td></tr>
-      <tr><td>name</td><td>string</td><td>✓</td><td>显示名称</td></tr>
-      <tr><td>baseURL</td><td>string</td><td></td><td>厂商 API 地址</td></tr>
-      <tr><td>apiKey</td><td>string</td><td></td><td>GET 时掩码，保存时明文</td></tr>
-      <tr><td>model</td><td>string</td><td>✓</td><td>当前模型名</td></tr>
-      <tr><td>models</td><td>string[]</td><td></td><td>模型白名单（空=不限制）</td></tr>
-      <tr><td>temperature / maxTokens / enabled</td><td>number / number / boolean</td><td></td><td>采样温度(0.7) / 最大token(4096) / 是否启用</td></tr>
-      <tr><td rowspan="5">McpServerConfig</td><td>id / name</td><td>string</td><td>✓</td><td>唯一 id / 显示名称</td></tr>
-      <tr><td>transport</td><td>'stdio'|'sse'|'http'</td><td>✓</td><td>MCP 传输方式</td></tr>
-      <tr><td>command / args / env</td><td>string / string[] / object</td><td></td><td>stdio 启动命令、参数、附加环境变量</td></tr>
-      <tr><td>url</td><td>string</td><td></td><td>sse/http 服务地址</td></tr>
-      <tr><td>enabled</td><td>boolean</td><td>✓</td><td>是否启用</td></tr>
-      <tr><td rowspan="4">SkillConfig</td><td>id / name / description</td><td>string</td><td>✓</td><td>技能 id / 名称 / 给 LLM 的说明</td></tr>
-      <tr><td>type</td><td>'builtin'|'mcp'</td><td>✓</td><td>内置函数 或 绑定 MCP 工具</td></tr>
-      <tr><td>mcpServerId</td><td>string</td><td></td><td>type=mcp 时绑定</td></tr>
-      <tr><td>enabled</td><td>boolean</td><td>✓</td><td>是否启用</td></tr>
+      <tr><th data-zh="类型" data-en="Type">类型</th><th data-zh="字段" data-en="Field">字段</th><th data-zh="类型" data-en="Type">类型</th><th data-zh="必填" data-en="Required">必填</th><th data-zh="说明" data-en="Description">说明</th></tr>
+      <tr><td rowspan="6">AppConfig</td><td>activeProviderId</td><td>string</td><td>✓</td><td data-zh="默认 Provider id（对话缺省时使用）" data-en="Default provider id (used when chat has no explicit one)">默认 Provider id（对话缺省时使用）</td></tr>
+      <tr><td>providers</td><td>ProviderConfig[]</td><td>✓</td><td data-zh="LLM Provider 列表" data-en="List of LLM providers">LLM Provider 列表</td></tr>
+      <tr><td>mcpServers</td><td>McpServerConfig[]</td><td>✓</td><td data-zh="MCP 服务器列表" data-en="List of MCP servers">MCP 服务器列表</td></tr>
+      <tr><td>skills</td><td>SkillConfig[]</td><td>✓</td><td data-zh="技能列表" data-en="List of skills">技能列表</td></tr>
+      <tr><td>systemPrompt</td><td>string</td><td></td><td data-zh="附加系统提示词（后端追加技能清单）" data-en="Extra system prompt (backend appends skill list)">附加系统提示词（后端追加技能清单）</td></tr>
+      <tr><td>maxToolRounds</td><td>number</td><td>✓</td><td data-zh="最大工具循环轮数（1~20）" data-en="Max tool-loop rounds (1~20)">最大工具循环轮数（1~20）</td></tr>
+      <tr><td rowspan="8">ProviderConfig</td><td>id</td><td>string</td><td>✓</td><td data-zh="唯一 id" data-en="Unique id">唯一 id</td></tr>
+      <tr><td>type</td><td>'openai'|'anthropic'|'gemini'|'ollama'</td><td>✓</td><td data-zh="Provider 类型" data-en="Provider type">Provider 类型</td></tr>
+      <tr><td>name</td><td>string</td><td>✓</td><td data-zh="显示名称" data-en="Display name">显示名称</td></tr>
+      <tr><td>baseURL</td><td>string</td><td></td><td data-zh="厂商 API 地址" data-en="Vendor API URL">厂商 API 地址</td></tr>
+      <tr><td>apiKey</td><td>string</td><td></td><td data-zh="GET 时掩码，保存时明文" data-en="Masked on GET, plaintext when saved">GET 时掩码，保存时明文</td></tr>
+      <tr><td>model</td><td>string</td><td>✓</td><td data-zh="当前模型名" data-en="Current model name">当前模型名</td></tr>
+      <tr><td>models</td><td>string[]</td><td></td><td data-zh="模型白名单（空=不限制）" data-en="Model whitelist (empty = unlimited)">模型白名单（空=不限制）</td></tr>
+      <tr><td>temperature / maxTokens / enabled</td><td>number / number / boolean</td><td></td><td data-zh="采样温度(0.7) / 最大token(4096) / 是否启用" data-en="Sampling temperature (0.7) / max tokens (4096) / enabled">采样温度(0.7) / 最大token(4096) / 是否启用</td></tr>
+      <tr><td rowspan="5">McpServerConfig</td><td>id / name</td><td>string</td><td>✓</td><td data-zh="唯一 id / 显示名称" data-en="Unique id / display name">唯一 id / 显示名称</td></tr>
+      <tr><td>transport</td><td>'stdio'|'sse'|'http'</td><td>✓</td><td data-zh="MCP 传输方式" data-en="MCP transport">MCP 传输方式</td></tr>
+      <tr><td>command / args / env</td><td>string / string[] / object</td><td></td><td data-zh="stdio 启动命令、参数、附加环境变量" data-en="stdio command, args, extra env vars">stdio 启动命令、参数、附加环境变量</td></tr>
+      <tr><td>url</td><td>string</td><td></td><td data-zh="sse/http 服务地址" data-en="sse/http server URL">sse/http 服务地址</td></tr>
+      <tr><td>enabled</td><td>boolean</td><td>✓</td><td data-zh="是否启用" data-en="Enabled">是否启用</td></tr>
+      <tr><td rowspan="4">SkillConfig</td><td>id / name / description</td><td>string</td><td>✓</td><td data-zh="技能 id / 名称 / 给 LLM 的说明" data-en="Skill id / name / description for LLM">技能 id / 名称 / 给 LLM 的说明</td></tr>
+      <tr><td>type</td><td>'builtin'|'mcp'</td><td>✓</td><td data-zh="内置函数 或 绑定 MCP 工具" data-en="Builtin function or bound MCP tool">内置函数 或 绑定 MCP 工具</td></tr>
+      <tr><td>mcpServerId</td><td>string</td><td></td><td data-zh="type=mcp 时绑定" data-en="Set when type=mcp">type=mcp 时绑定</td></tr>
+      <tr><td>enabled</td><td>boolean</td><td>✓</td><td data-zh="是否启用" data-en="Enabled">是否启用</td></tr>
     </table>
-    <div class="box">掩码参考：apiKey 长度 ≤8 全部 <code>*</code>；否则 <code>前4位 + *×min(12, len-8) + 后4位</code>。所有中文名称必须 UTF-8 原样返回（勿替换为 <code>?</code>）。</div>
+    <div class="box"><span data-zh="掩码参考：apiKey 长度 ≤8 全部 " data-en="Masking reference: if apiKey length ≤8, mask all as ">掩码参考：apiKey 长度 ≤8 全部 </span><code>*</code><span data-zh="；否则 " data-en="; otherwise ">；否则 </span><code>前4位 + *×min(12, len-8) + 后4位</code><span data-zh="。所有中文名称必须 UTF-8 原样返回（勿替换为 " data-en=". All Chinese names must be returned as UTF-8 (do not replace with ">。所有中文名称必须 UTF-8 原样返回（勿替换为 </span><code>?</code><span data-zh="）。" data-en=").">）。</span></div>
 
-    <h2 class="anchor" id="api-config-put">3.2 <span class="badge b-put">PUT</span> /api/config — 保存配置</h2>
-    <p>设置中心「保存配置」调用。请求体为完整 <code>AppConfig</code>（apiKey 明文），后端<b>整体覆盖</b>。</p>
+    <h2 class="anchor" id="api-config-put"><span class="badge b-put">PUT</span> /api/config — <span data-zh="保存配置" data-en="Save config">保存配置</span></h2>
+    <p><span data-zh="设置中心「保存配置」调用。请求体为完整 " data-en="Called by &quot;Save config&quot; in Settings. The body is the full ">设置中心「保存配置」调用。请求体为完整 </span><code>AppConfig</code><span data-zh="（apiKey 明文），后端" data-en=" (plaintext apiKey); the backend">（apiKey 明文），后端</span><b data-zh="整体覆盖" data-en="overwrites it entirely">整体覆盖</b><span data-zh="。" data-en=".">。</span></p>
     <pre><code><span class="ep">PUT</span> /api/config
 Content-Type: application/json
 { ...完整 AppConfig... }
@@ -163,56 +169,56 @@ Content-Type: application/json
 → 200 { "ok": true }
 → 400 { "error": "配置格式不正确：缺少 providers 数组" }</code></pre>
 
-    <h2 class="anchor" id="api-config-models">3.3 <span class="badge b-post">POST</span> /api/config/models — 拉取模型列表</h2>
+    <h2 class="anchor" id="api-config-models"><span class="badge b-post">POST</span> /api/config/models — <span data-zh="拉取模型列表" data-en="Fetch model list">拉取模型列表</span></h2>
     <pre><code><span class="ep">POST</span> /api/config/models
 { "type": "ollama", "baseURL": "http://localhost:11434", "apiKey": "", "model": "ornith-1.5:9b" }
 
 → 200 { "ok": true, "models": ["ornith-1.5:9b", "qwen35-4b:latest"] }
 → 200 { "ok": false, "message": "无法连接到 http://localhost:11434（Ollama 服务未启动或地址不对）" }</code></pre>
-    <div class="box warn">前端超时 8 秒；错误文案需人话化，区分「网络不通」与「Key 无效」；厂商不可达时可返回离线候选模型（ok: true）。</div>
+    <div class="box warn" data-zh="前端超时 8 秒；错误文案需人话化，区分「网络不通」与「Key 无效」；厂商不可达时可返回离线候选模型（ok: true）。" data-en="Frontend times out at 8s; error messages should be human-friendly and distinguish &quot;network unreachable&quot; from &quot;invalid key&quot;; may return offline candidate models (ok: true) when the vendor is unreachable.">前端超时 8 秒；错误文案需人话化，区分「网络不通」与「Key 无效」；厂商不可达时可返回离线候选模型（ok: true）。</div>
 
-    <h2 class="anchor" id="api-config-test">3.4 <span class="badge b-post">POST</span> /api/config/test-provider — 测试连通性</h2>
+    <h2 class="anchor" id="api-config-test"><span class="badge b-post">POST</span> /api/config/test-provider — <span data-zh="测试连通性" data-en="Test connectivity">测试连通性</span></h2>
     <pre><code><span class="ep">POST</span> /api/config/test-provider
 { 同上 ProviderConfig }
 
 → 200 { "ok": true, "message": "Ollama 本地 (ornith-1.5:9b) 连接成功" }
 → 200 { "ok": false, "message": "无法连接到 ...（Ollama 服务未启动或地址不对）" }</code></pre>
 
-    <h2 class="anchor" id="api-mcp-test">3.5 <span class="badge b-post">POST</span> /api/mcp/test — 测试 MCP 连接</h2>
-    <p>请求体为完整 <code>McpServerConfig</code>。→ <code>{ "ok": true, "message": "已连接，发现 N 个工具" }</code> 或 <code>{ "ok": false, "message": "原因" }</code></p>
+    <h2 class="anchor" id="api-mcp-test"><span class="badge b-post">POST</span> /api/mcp/test — <span data-zh="测试 MCP 连接" data-en="Test MCP connection">测试 MCP 连接</span></h2>
+    <p><span data-zh="请求体为完整 " data-en="The body is a full ">请求体为完整 </span><code>McpServerConfig</code><span data-zh="。→ " data-en=". → ">。→ </span><code>{ "ok": true, "message": "已连接，发现 N 个工具" }</code><span data-zh=" 或 " data-en=" or "> 或 </span><code>{ "ok": false, "message": "原因" }</code></p>
 
-    <h2 class="anchor" id="api-mcp-refresh">3.6 <span class="badge b-post">POST</span> /api/mcp/refresh — 刷新 MCP 会话</h2>
+    <h2 class="anchor" id="api-mcp-refresh"><span class="badge b-post">POST</span> /api/mcp/refresh — <span data-zh="刷新 MCP 会话" data-en="Refresh MCP session">刷新 MCP 会话</span></h2>
     <pre><code><span class="ep">POST</span> /api/mcp/refresh
 { "id": "everything" }
 → 200 { "ok": true, "message": "已重新连接" }
 → 404 { "ok": false, "message": "未找到 MCP Server: everything" }</code></pre>
 
-    <h2 class="anchor" id="api-mcp-tools">3.7 <span class="badge b-get">GET</span> /api/mcp/tools — 列出 MCP 工具（可选）</h2>
+    <h2 class="anchor" id="api-mcp-tools"><span class="badge b-get">GET</span> /api/mcp/tools — <span data-zh="列出 MCP 工具（可选）" data-en="List MCP tools (optional)">列出 MCP 工具（可选）</span></h2>
     <pre><code>→ 200 [ { "serverId": "everything", "serverName": "...", "tools": [{ "name": "mcp__everything__echo", "description": "Echo 工具" }] } ]</code></pre>
 
-    <h2 class="anchor" id="api-skills">3.8 <span class="badge b-get">GET</span> /api/skills — 技能列表</h2>
+    <h2 class="anchor" id="api-skills"><span class="badge b-get">GET</span> /api/skills — <span data-zh="技能列表" data-en="Skill list">技能列表</span></h2>
     <pre><code>→ 200 {
   "builtins": [{ "id": "get_current_time", "name": "获取当前时间", "description": "...", "enabled": true, "parameters": { "type": "object", "properties": {}, "required": [] } }],
   "active":   [{ "id": "get_current_time", "name": "获取当前时间", "description": "...", "kind": "builtin", "mcpServerId": null }],
   "errors": []
 }</code></pre>
 
-    <h2 class="anchor" id="api-health">3.9 <span class="badge b-get">GET</span> /api/health — 健康检查</h2>
+    <h2 class="anchor" id="api-health"><span class="badge b-get">GET</span> /api/health — <span data-zh="健康检查" data-en="Health check">健康检查</span></h2>
     <pre><code>→ 200 { "ok": true, "providers": [...], "activeProviderId": "ollama-demo", "mcpServers": [...], "skills": ["获取当前时间", ...] }</code></pre>
 
-    <h2 class="anchor" id="api-chat">3.10 <span class="badge b-sse">POST</span> /api/chat — 流式对话（核心，SSE）</h2>
+    <h2 class="anchor" id="api-chat"><span class="badge b-sse">POST</span> /api/chat — <span data-zh="流式对话（核心，SSE）" data-en="Streaming chat (core, SSE)">流式对话（核心，SSE）</span></h2>
     <pre><code><span class="ep">POST</span> /api/chat
 Content-Type: application/json
 { "messages": [{ "role": "user", "content": "现在几点？" }], "providerId": "ollama-demo", "model": "ornith-1.5:9b" }</code></pre>
-    <p>响应 <code>Content-Type: text/event-stream; charset=utf-8</code>，事件格式：<code>event: &lt;名&gt;\ndata: &lt;JSON&gt;\n\n</code>。服务端设置 <code>Cache-Control: no-cache, no-transform</code>、<code>X-Accel-Buffering: no</code>、立即 flush；每 15s 发一行 <code>: ping</code> 心跳。</p>
+    <p><span data-zh="响应 " data-en="Response ">响应 </span><code>Content-Type: text/event-stream; charset=utf-8</code><span data-zh="，事件格式：" data-en="; event format: ">，事件格式：</span><code>event: &lt;名&gt;\ndata: &lt;JSON&gt;\n\n</code><span data-zh="。服务端设置 " data-en=". The server sets ">。服务端设置 </span><code>Cache-Control: no-cache, no-transform</code><span data-zh="、" data-en=", ">、</span><code>X-Accel-Buffering: no</code><span data-zh="、立即 flush；每 15s 发一行 " data-en=" and flushes immediately; it sends a ">、立即 flush；每 15s 发一行 </span><code>: ping</code><span data-zh=" 心跳。" data-en=" heartbeat line every 15s."> 心跳。</span></p>
     <table>
-      <tr><th>事件</th><th>data 字段</th><th>时机</th></tr>
-      <tr><td><code>info</code></td><td>{ "text" }</td><td>流程提示（居中显示）</td></tr>
-      <tr><td><code>tool_start</code></td><td>{ "name", "id", "args" }</td><td>工具开始执行</td></tr>
-      <tr><td><code>tool_result</code></td><td>{ "name", "id", "result"?, "error"? }</td><td>工具执行完成（result/error 二选一）</td></tr>
-      <tr><td><code>delta</code></td><td>{ "text" }</td><td><b>LLM 流式增量文本（逐 token）</b></td></tr>
-      <tr><td><code>done</code></td><td>{ "usage"? }</td><td>正常结束，随后关闭流</td></tr>
-      <tr><td><code>error</code></td><td>{ "message" }</td><td>异常终止，随后关闭流</td></tr>
+      <tr><th data-zh="事件" data-en="Event">事件</th><th data-zh="data 字段" data-en="data fields">data 字段</th><th data-zh="时机" data-en="Timing">时机</th></tr>
+      <tr><td><code>info</code></td><td>{ "text" }</td><td data-zh="流程提示（居中显示）" data-en="Process hint (shown centered)">流程提示（居中显示）</td></tr>
+      <tr><td><code>tool_start</code></td><td>{ "name", "id", "args" }</td><td data-zh="工具开始执行" data-en="Tool started">工具开始执行</td></tr>
+      <tr><td><code>tool_result</code></td><td>{ "name", "id", "result"?, "error"? }</td><td data-zh="工具执行完成（result/error 二选一）" data-en="Tool finished (result or error)">工具执行完成（result/error 二选一）</td></tr>
+      <tr><td><code>delta</code></td><td>{ "text" }</td><td><b data-zh="LLM 流式增量文本（逐 token）" data-en="LLM incremental text (per token)">LLM 流式增量文本（逐 token）</b></td></tr>
+      <tr><td><code>done</code></td><td>{ "usage"? }</td><td data-zh="正常结束，随后关闭流" data-en="Normal end, then stream closes">正常结束，随后关闭流</td></tr>
+      <tr><td><code>error</code></td><td>{ "message" }</td><td data-zh="异常终止，随后关闭流" data-en="Error end, then stream closes">异常终止，随后关闭流</td></tr>
     </table>
     <pre><code><span class="ep">event: info</span>
 <span class="en">data: {"text":"已加载 4 个技能（4 个工具）"}</span>
@@ -229,20 +235,20 @@ Content-Type: application/json
 <span class="ep">event: done</span>
 <span class="en">data: {"usage":{"eval_count":64}}</span></code></pre>
 
-    <h2 class="anchor" id="provider-abstraction">4.1 统一 LLM Provider 适配层</h2>
+    <h2 class="anchor" id="provider-abstraction" data-zh="4.1 统一 LLM Provider 适配层" data-en="4.1 Unified LLM Provider Adapter Layer">4.1 统一 LLM Provider 适配层</h2>
     <table>
-      <tr><th>方法</th><th>入参</th><th>出参</th><th>说明</th></tr>
-      <tr><td>chat(req)</td><td>{ model, messages, tools?, temperature?, maxTokens?, onEvent }</td><td>onEvent 流式回调</td><td>逐 token 回调 text-delta；识别 tool_calls 回调 tool-call；结束回调 done</td></tr>
-      <tr><td>test()</td><td>—</td><td>{ ok, message }</td><td>轻量连通性测试</td></tr>
-      <tr><td>listModels()</td><td>—</td><td>string[]</td><td>拉取模型列表</td></tr>
+      <tr><th data-zh="方法" data-en="Method">方法</th><th data-zh="入参" data-en="Input">入参</th><th data-zh="出参" data-en="Output">出参</th><th data-zh="说明" data-en="Description">说明</th></tr>
+      <tr><td>chat(req)</td><td>{ model, messages, tools?, temperature?, maxTokens?, onEvent }</td><td>onEvent 流式回调</td><td data-zh="逐 token 回调 text-delta；识别 tool_calls 回调 tool-call；结束回调 done" data-en="Emits text-delta per token; detects tool_calls and emits tool-call; emits done at end">逐 token 回调 text-delta；识别 tool_calls 回调 tool-call；结束回调 done</td></tr>
+      <tr><td>test()</td><td>—</td><td>{ ok, message }</td><td data-zh="轻量连通性测试" data-en="Lightweight connectivity test">轻量连通性测试</td></tr>
+      <tr><td>listModels()</td><td>—</td><td>string[]</td><td data-zh="拉取模型列表" data-en="Fetch model list">拉取模型列表</td></tr>
     </table>
-    <p>厂商类型：<code>openai</code>（OpenAI 兼容 /v1/chat/completions 流式）、<code>anthropic</code>（Messages API）、<code>gemini</code>（generateContent 流式）、<code>ollama</code>（/api/chat NDJSON 流式）。新厂商可在「＋ 添加 Provider」预设中扩展。</p>
+    <p><span data-zh="厂商类型：" data-en="Vendor types: ">厂商类型：</span><code>openai</code><span data-zh="（OpenAI 兼容 /v1/chat/completions 流式）、" data-en=" (OpenAI-compatible /v1/chat/completions streaming), ">（OpenAI 兼容 /v1/chat/completions 流式）、</span><code>anthropic</code><span data-zh="（Messages API）、" data-en=" (Messages API), ">（Messages API）、</span><code>gemini</code><span data-zh="（generateContent 流式）、" data-en=" (generateContent streaming), ">（generateContent 流式）、</span><code>ollama</code><span data-zh="（/api/chat NDJSON 流式）。新厂商可在「＋ 添加 Provider」预设中扩展。" data-en=" (/api/chat NDJSON streaming). New vendors can be added via the &quot;+ Add Provider&quot; presets.">（/api/chat NDJSON 流式）。新厂商可在「＋ 添加 Provider」预设中扩展。</span></p>
 
-    <h2 class="anchor" id="tool-injection">4.2 工具定义注入</h2>
-    <p>每次对话把启用技能转为 function schema 传入 LLM；建议同时把技能清单以文本追加到系统提示词尾部。启用规则：builtin 启用 → 注入函数；mcp 启用且绑定 server 启用 → 动态注入其全部工具。</p>
+    <h2 class="anchor" id="tool-injection" data-zh="4.2 工具定义注入" data-en="4.2 Tool Definition Injection">4.2 工具定义注入</h2>
+    <p data-zh="每次对话把启用技能转为 function schema 传入 LLM；建议同时把技能清单以文本追加到系统提示词尾部。启用规则：builtin 启用 → 注入函数；mcp 启用且绑定 server 启用 → 动态注入其全部工具。" data-en="Each chat converts enabled skills into function schemas passed to the LLM; it is recommended to also append the skill list as text to the system prompt. Enable rules: builtin enabled → inject the function; mcp enabled with its bound server enabled → dynamically inject all its tools.">每次对话把启用技能转为 function schema 传入 LLM；建议同时把技能清单以文本追加到系统提示词尾部。启用规则：builtin 启用 → 注入函数；mcp 启用且绑定 server 启用 → 动态注入其全部工具。</p>
     <pre><code>{ "type": "function", "function": { "name": "get_current_time", "description": "获取当前日期与时间（含时区）", "parameters": { "type": "object", "properties": {}, "required": [] } } }</code></pre>
 
-    <h2 class="anchor" id="agent-loop">4.3 Agent 工具循环</h2>
+    <h2 class="anchor" id="agent-loop" data-zh="4.3 Agent 工具循环" data-en="4.3 Agent Tool Loop">4.3 Agent 工具循环</h2>
     <pre><code>for round in 1..maxToolRounds:
     result = provider.chat(messages, tools)      # 流式输出 delta
     if 无 tool_calls: 结束（emit done）
@@ -253,22 +259,22 @@ Content-Type: application/json
         emit tool_result
         messages += tool(toolCallId, JSON(result))
     # 继续下一轮，把工具结果喂回 LLM</code></pre>
-    <div class="box">上限 maxToolRounds（默认 8）；工具结果截断（如 12KB）防膨胀；客户端断开（req close）时中止厂商请求。</div>
+    <div class="box" data-zh="上限 maxToolRounds（默认 8）；工具结果截断（如 12KB）防膨胀；客户端断开（req close）时中止厂商请求。" data-en="Cap at maxToolRounds (default 8); truncate tool results (e.g. 12KB) to prevent bloat; abort vendor requests when the client disconnects (req close).">上限 maxToolRounds（默认 8）；工具结果截断（如 12KB）防膨胀；客户端断开（req close）时中止厂商请求。</div>
 
-    <h2 class="anchor" id="call-map">5. 前端调用自查表</h2>
+    <h2 class="anchor" id="call-map" data-zh="5. 前端调用自查表" data-en="5. Frontend Call Map">5. 前端调用自查表</h2>
     <table>
-      <tr><th>页面/行为</th><th>调用接口</th></tr>
-      <tr><td>应用启动健康探测</td><td>GET /api/health</td></tr>
-      <tr><td>设置中心加载</td><td>GET /api/config · GET /api/skills</td></tr>
-      <tr><td>设置中心保存</td><td>PUT /api/config</td></tr>
-      <tr><td>Provider 测试/拉模型</td><td>POST /api/config/test-provider · POST /api/config/models</td></tr>
-      <tr><td>MCP 测试/重连</td><td>POST /api/mcp/test · POST /api/mcp/refresh</td></tr>
-      <tr><td>发送消息/流式</td><td>POST /api/chat（SSE）</td></tr>
-      <tr><td>前端资源/PWA/分享</td><td>/ · /assets/* · /manifest.json · /sw.js · /icons/*（静态）</td></tr>
+      <tr><th data-zh="页面/行为" data-en="Page / Action">页面/行为</th><th data-zh="调用接口" data-en="Endpoint">调用接口</th></tr>
+      <tr><td data-zh="应用启动健康探测" data-en="App startup health probe">应用启动健康探测</td><td>GET /api/health</td></tr>
+      <tr><td data-zh="设置中心加载" data-en="Settings load">设置中心加载</td><td>GET /api/config · GET /api/skills</td></tr>
+      <tr><td data-zh="设置中心保存" data-en="Settings save">设置中心保存</td><td>PUT /api/config</td></tr>
+      <tr><td data-zh="Provider 测试/拉模型" data-en="Provider test / fetch models">Provider 测试/拉模型</td><td>POST /api/config/test-provider · POST /api/config/models</td></tr>
+      <tr><td data-zh="MCP 测试/重连" data-en="MCP test / reconnect">MCP 测试/重连</td><td>POST /api/mcp/test · POST /api/mcp/refresh</td></tr>
+      <tr><td data-zh="发送消息/流式" data-en="Send message / streaming">发送消息/流式</td><td>POST /api/chat（SSE）</td></tr>
+      <tr><td data-zh="前端资源/PWA/分享" data-en="Static assets / PWA / share">前端资源/PWA/分享</td><td>/ · /assets/* · /manifest.json · /sw.js · /icons/*（静态）</td></tr>
     </table>
 
-    <h2 class="anchor" id="default-config">6. 默认配置参考（后端初始化示例）</h2>
-    <p>首次启动无持久化配置时返回以下默认值（所有中文必须 UTF-8，勿用 <code>?</code> 占位）：</p>
+    <h2 class="anchor" id="default-config" data-zh="6. 默认配置参考（后端初始化示例）" data-en="6. Default Configuration (backend init example)">6. 默认配置参考（后端初始化示例）</h2>
+    <p><span data-zh="首次启动无持久化配置时返回以下默认值（所有中文必须 UTF-8，勿用 " data-en="When no persisted config exists on first start, return these defaults (all Chinese must be UTF-8; do not use ">首次启动无持久化配置时返回以下默认值（所有中文必须 UTF-8，勿用 </span><code>?</code><span data-zh=" 占位）：" data-en=" placeholders):"> 占位）：</span></p>
     <pre><code>{
   "activeProviderId": "openai-demo",
   "providers": [
@@ -284,15 +290,55 @@ Content-Type: application/json
   "maxToolRounds": 8
 }</code></pre>
 
-    <h2 class="anchor" id="verify">7. 快速验证清单</h2>
+    <h2 class="anchor" id="verify" data-zh="7. 快速验证清单" data-en="7. Quick Verification Checklist">7. 快速验证清单</h2>
     <ol>
-      <li><code>GET /api/health</code> 返回 <code>{ "ok": true }</code></li>
-      <li><code>GET /api/config</code> 中文无乱码、apiKey 已掩码</li>
-      <li><code>PUT /api/config</code> 保存后重新 GET 一致</li>
-      <li><code>POST /api/chat</code> 返回 SSE：info → delta×N → done</li>
-      <li>浏览器打开 <code>/</code>：对话、设置中心四域、保存配置可用；移动端底部导航正常；/manifest.json 可达</li>
+      <li><code>GET /api/health</code> <span data-zh="返回 " data-en="returns ">返回 </span><code>{ "ok": true }</code></li>
+      <li><code>GET /api/config</code> <span data-zh="中文无乱码、apiKey 已掩码" data-en="Chinese intact, apiKey masked">中文无乱码、apiKey 已掩码</span></li>
+      <li><code>PUT /api/config</code> <span data-zh="保存后重新 GET 一致" data-en="GET matches after save">保存后重新 GET 一致</span></li>
+      <li><code>POST /api/chat</code> <span data-zh="返回 SSE：info → delta×N → done" data-en="returns SSE: info → delta×N → done">返回 SSE：info → delta×N → done</span></li>
+      <li><span data-zh="浏览器打开 " data-en="Open ">浏览器打开 </span><code>/</code><span data-zh="：对话、设置中心四域、保存配置可用；移动端底部导航正常；/manifest.json 可达" data-en=" in browser: chat, all four Settings tabs, save config work; mobile bottom nav works; /manifest.json reachable">：对话、设置中心四域、保存配置可用；移动端底部导航正常；/manifest.json 可达</span></li>
     </ol>
   </main>
 </div>
+<script>
+(function () {
+  var KEY = 'chatui_lang';
+  function getLang() {
+    try {
+      var s = localStorage.getItem(KEY);
+      if (s === 'en' || s === 'zh') return s;
+    } catch (e) { /* ignore */ }
+    try {
+      return (navigator.language || 'zh').toLowerCase().indexOf('en') === 0 ? 'en' : 'zh';
+    } catch (e) { return 'zh'; }
+  }
+  function apply(lang) {
+    try { document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN'; } catch (e) { /* ignore */ }
+    var els = document.querySelectorAll('[data-zh][data-en]');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      el.textContent = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-zh');
+    }
+    var t = document.querySelector('title');
+    if (t) t.textContent = lang === 'en' ? t.getAttribute('data-en') : t.getAttribute('data-zh');
+    var btn = document.getElementById('langBtn');
+    if (btn) {
+      btn.textContent = lang === 'en' ? '中' : 'EN';
+      btn.title = lang === 'en' ? '切换到中文' : 'Switch to English';
+    }
+  }
+  function toggle() {
+    var next = getLang() === 'en' ? 'zh' : 'en';
+    try { localStorage.setItem(KEY, next); } catch (e) { /* ignore */ }
+    apply(next);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = document.getElementById('langBtn');
+    if (b) b.addEventListener('click', toggle);
+    apply(getLang());
+  });
+  apply(getLang());
+})();
+</script>
 </body>
 </html>
