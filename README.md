@@ -1,5 +1,7 @@
 # ChatUI LLM Workbench
 
+**[English](README.en.md)** · 中文　|　完整英文版见 [README.en.md](README.en.md)
+
 基于 **ChatUI（[@chatui/core](https://chatui.io)）** 的通用大模型对话聊天窗口：
 **统一 LLM Provider 配置 + MCP 工具 + Skill 技能系统**，全端响应式（PC / 平板 / 移动端）+ PWA 可安装。
 
