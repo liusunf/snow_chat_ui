@@ -323,6 +323,7 @@ export function ChatView({ conversation, providerName, modelLabel, onMessagesCha
         )}
         <div className="chatui-shell">
           <Chat
+            locale={lang === 'zh' ? 'zh-CN' : 'en-US'}
             placeholder={t('chat.placeholder')}
             messages={messages}
             renderMessageContent={renderMessageContent}
